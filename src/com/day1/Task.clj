@@ -5,5 +5,4 @@
   "Should solve task"
   [data]
   (println data)
-  0
-)
+  0)
