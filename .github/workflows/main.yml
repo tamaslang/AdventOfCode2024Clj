@@ -1,4 +1,4 @@
-name: Advent Of Code 2023 CI
+name: Advent Of Code 2024 CI
 
 on:
   push:
