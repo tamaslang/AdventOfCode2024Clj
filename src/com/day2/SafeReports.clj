@@ -27,7 +27,6 @@
 
 (defn number-of-safe-reports-with-dampener
   [data]
-  (println "data = " data)
   (->>
    data
    (map parse-numbers-in-line)
@@ -44,13 +43,11 @@
 
 (defn number-of-safe-reports-with-dampener-brute-force
   [data]
-  (let [{safe true maybe-unsafe false} (->>
+  (let [{safe-rows true unsafe-rows false} (->>
                                         data
                                         (map parse-numbers-in-line)
                                         (group-by #(or (numbers-safe? increasing %1) (numbers-safe? decreasing %1))))
-        safe-when-dampener (->> maybe-unsafe
-                                (map all-combinations-with-one-removed)
-                                (map has-a-valid-combination)
-                                (remove nil?))]
+        safe-when-dampener (filter (fn[unsafe-row] (has-a-valid-combination (all-combinations-with-one-removed unsafe-row))) unsafe-rows)
+        ]
 
-    (+ (count safe) (count safe-when-dampener))))
+    (+ (count safe-rows) (count safe-when-dampener))))
