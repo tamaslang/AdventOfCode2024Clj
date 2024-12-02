@@ -27,8 +27,34 @@
 
 (defn number-of-safe-reports-with-dampener
   [data]
+  (println "data = " data)
   (->>
    data
    (map parse-numbers-in-line)
    (filter #(or (numbers-safe-dampener? increasing %1) (numbers-safe-dampener? decreasing %1)))
    (count)))
+
+(defn all-combinations-with-one-removed [numbers]
+  (->>
+   (range 0 (count numbers))
+   (map (fn [index] (flatten (keep-indexed #(when-not (= index %1) %2) numbers))))))
+
+(defn has-a-valid-combination [lists-of-numbers]
+  (some (fn [combinations-for-1] (or (numbers-safe? increasing combinations-for-1) (numbers-safe? decreasing combinations-for-1))) lists-of-numbers))
+
+(defn number-of-safe-reports-with-dampener-brute-force
+  [data]
+  (def groupped-by-safe (->>
+                         data
+                         (map parse-numbers-in-line)
+                         (group-by #(or (numbers-safe? increasing %1) (numbers-safe? decreasing %1)))))
+
+  (def not-safe (groupped-by-safe false))
+  (def safe (groupped-by-safe true))
+
+  ; try to combine and make it safe by removing
+  (def safe-with-dampener (->> not-safe
+                               (map all-combinations-with-one-removed)
+                               (map has-a-valid-combination)
+                               (remove nil?)))
+  (+ (count safe) (count safe-with-dampener)))

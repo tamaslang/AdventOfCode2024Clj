@@ -16,7 +16,7 @@
                                       "8 6 4 4 1"
                                       "1 3 6 7 9"])))))
 
-(deftest should-find-safe-reports-in-input-file
+(deftest should-find-safe-reports-on-input-file
   (testing "Should find safe reports in input file"
     (is (= 549 (number-of-safe-reports (str/split-lines (slurp data-file)))))))
 
@@ -29,11 +29,22 @@
                                                     "8 6 4 4 1"
                                                     "1 3 6 7 9"])))))
 
-(deftest should-find-safe-reports-with-dampener-in-input-file
+(deftest should-find-safe-reports-with-dampener-on-input-file
   (testing "Should find safe reports with dampener in input file"
     (is (= 579 (number-of-safe-reports-with-dampener (str/split-lines (slurp data-file)))))))
 
+(deftest should-find-safe-reports-with-dampener-brute-force-on-input-file
+  (testing "Should find safe reports with dampener brute force"
+    (is (= 589 (number-of-safe-reports-with-dampener-brute-force (str/split-lines (slurp data-file)))))))
 
-(deftest should-find-safe-reports-with-dampener
-  (testing "Should find safe reports with dampener"
-    (is (= 1 (number-of-safe-reports-with-dampener ["65 66 63 60"])))))
+(deftest should-find-safe-reports-with-dampener-brute-force
+  (testing "Should find safe reports with dampener brute force"
+    (is (= 4 (number-of-safe-reports-with-dampener-brute-force ["7 6 4 2 1"
+                                                                "1 2 7 8 9"
+                                                                "9 7 6 2 1"
+                                                                "1 3 2 4 5"
+                                                                "8 6 4 4 1"
+                                                                "1 3 6 7 9"])))))
+
+
+
