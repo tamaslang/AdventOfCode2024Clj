@@ -44,17 +44,13 @@
 
 (defn number-of-safe-reports-with-dampener-brute-force
   [data]
-  (def groupped-by-safe (->>
-                         data
-                         (map parse-numbers-in-line)
-                         (group-by #(or (numbers-safe? increasing %1) (numbers-safe? decreasing %1)))))
+  (let [{safe true maybe-unsafe false} (->>
+                                        data
+                                        (map parse-numbers-in-line)
+                                        (group-by #(or (numbers-safe? increasing %1) (numbers-safe? decreasing %1))))
+        safe-when-dampener (->> maybe-unsafe
+                                (map all-combinations-with-one-removed)
+                                (map has-a-valid-combination)
+                                (remove nil?))]
 
-  (def not-safe (groupped-by-safe false))
-  (def safe (groupped-by-safe true))
-
-  ; try to combine and make it safe by removing
-  (def safe-with-dampener (->> not-safe
-                               (map all-combinations-with-one-removed)
-                               (map has-a-valid-combination)
-                               (remove nil?)))
-  (+ (count safe) (count safe-with-dampener)))
+    (+ (count safe) (count safe-when-dampener))))
