@@ -10,8 +10,6 @@ Template generated using: https://github.com/seancorfield/deps-new
 
 ## Installation
 
-Download from https://github.com/com/AdventOfCode2023Clj
-
 ## Usage
 
 FIXME: explanation
@@ -26,7 +24,7 @@ Run the project, overriding the name to be greeted:
     $ clojure -X:run-x :name '"Someone"'
     Hello, Someone!
 
-Run the project directly, via `:main-opts` (`-m com.AdventOfCode2023Clj`):
+Run the project directly, via `:main-opts` (`-m com.AdventOfCode2024Clj`):
 
     $ clojure -M:run-m
     Hello, World!
@@ -51,10 +49,6 @@ information in generated `pom.xml` by updating `build.clj`.
 If you don't want the `pom.xml` file in your project, you can remove it. The `ci` task will
 still generate a minimal `pom.xml` as part of the `uber` task, unless you remove `version`
 from `build.clj`.
-
-Run that uberjar:
-
-    $ java -jar target/net.clojars.com/AdventOfCode2023Clj-0.1.0-SNAPSHOT.jar
 
 ## Options
 
