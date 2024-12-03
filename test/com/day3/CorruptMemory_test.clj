@@ -1,8 +1,6 @@
 (ns com.day3.CorruptMemory-test
   (:require [clojure.test :refer :all]
             [com.day3.CorruptMemory :refer :all]
-            [com.util.Utils :as utils]
-            [clojure.string :as str]
             [clojure.java.io :as io]))
 
 (def data-file (io/resource
