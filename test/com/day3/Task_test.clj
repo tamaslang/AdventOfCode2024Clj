@@ -10,8 +10,8 @@
 
 (deftest should-solve-in-example
   (testing "Should solve"
-    (is (= 0 (solve ["3   4"])))))
+    (is (= 161 (solve "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))")))))
 
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
-    (is (= 0 (solve (str/split-lines (slurp data-file)))))))
+    (is (= 164730528 (solve (slurp data-file))))))
