@@ -16,15 +16,15 @@
   (parse-instructions (re-seq #"mul\(\d+,\d+\)" data)))
 
 (defn parse-instructions-with-do-and-don't [instructions]
-  (let [[total _] (reduce (fn [[total do?], current]
+  (let [[sum _] (reduce (fn [[sum do?], current]
                             (cond
-                              (= current "don't") [total false]
-                              (= current "do") [total true]
-                              do? [(+ total (eval-mul current)) do?]
-                              :else [total do?]))
+                              (= current "don't") [sum false]
+                              (= current "do") [sum true]
+                              do? [(+ sum (eval-mul current)) do?]
+                              :else [sum do?]))
                           [0 true]
                           instructions)]
-    total))
+    sum))
 
 (defn find-instructions-task2
   "should find instructions handling do and don't"
