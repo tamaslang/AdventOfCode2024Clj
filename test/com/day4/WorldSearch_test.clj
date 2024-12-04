@@ -9,11 +9,11 @@
 
 (deftest should-find-xmas-in-small-example
   (testing "Should find XMAS in small example"
-    (is (= 10  (world-search ["..X..."
+    (is (= 4  (world-search ["..X..."
                              ".SAMX."
                              ".A..A."
                              "XMAS.S"
-                              ".X...."])))))
+                             ".X...."])))))
 
 (deftest should-solve-in-example-with-dots
   (testing "Should find XMAS in example 2"
