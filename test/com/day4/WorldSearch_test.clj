@@ -42,4 +42,4 @@
 
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
-    (is (= 0 (world-search (str/split-lines (slurp data-file)))))))
+    (is (= 2639 (world-search (str/split-lines (slurp data-file)))))))
