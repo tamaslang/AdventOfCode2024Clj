@@ -17,10 +17,10 @@
 (defn create-matrix [string-lines]
   (into [] (map vec) string-lines))
 
-(defn mat->arr-w-symbol-and-pos [matrix]
+(defn matrix->arr-w-symbol-and-xy [matrix]
   (for [[i row] (map-indexed vector matrix)
         [j key] (map-indexed vector row)]
-    {:symbol key :pos [i j]}))
+    {:symbol key :x j :y i}))
 
 (defn print-matrix [matrix]
   (doseq [line matrix]
