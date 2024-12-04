@@ -40,8 +40,6 @@
                              "MAMMMXMMMM"
                              "MXMXAXMASX"])))))
 
-
-
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
     (is (= 2639 (world-search (str/split-lines (slurp data-file)))))))
@@ -79,16 +77,18 @@
 
 (deftest should-find-crossed-mas-in-small-example-4
   (testing "Should find crossed XMAS in small example 4"
-    (is (= 1  (world-cross-search ["S.M"
-                                   ".A."
-                                   "S.M"])))))
-
-(deftest should-find-crossed-mas-in-small-example-4
-  (testing "Should find crossed XMAS in small example 4"
     (is (= 1  (world-cross-search ["M.M"
                                    ".A."
                                    "S.S"])))))
 
+(deftest should-find-crossed-mas-in-example
+  (testing "Should find crossed XMAS in example"
+    (is (= 8  (world-cross-search ["M.S.M.S.M"
+                                   ".A.A.A.A."
+                                   "M.S.M.S.M"
+                                   ".A.A.A.A."
+                                   "M.S.M.S.M"])))))
+
 (deftest should-solve-crossed-for-input-file
   (testing "Should solve for input file"
-    (is (= 1919 (world-cross-search (str/split-lines (slurp data-file)))))))
+    (is (= 2005 (world-cross-search (str/split-lines (slurp data-file)))))))

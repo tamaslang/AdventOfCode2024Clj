@@ -46,9 +46,9 @@
 (defn find-word-cross [matrix [x y] word]
   (if (or
        (and (find-word matrix [x y] direction-southeast word) (find-word matrix [x (+ y 2)] direction-northeast word))
-       (and (find-word matrix [x y] direction-northeast word) (find-word matrix [(+ x 2) y] direction-northwest word))
-       (and (find-word matrix [x y] direction-northwest word) (find-word matrix [x (- y 2)] direction-southwest word))
-       (and (find-word matrix [x y] direction-southwest word) (find-word matrix [(- x 2) y] direction-southeast word)))
+       (and (find-word matrix [x y] direction-southeast (reverse word)) (find-word matrix [x (+ y 2)] direction-northeast (reverse word)))
+       (and (find-word matrix [x y] direction-southeast word) (find-word matrix [(+ x 2) y] direction-southwest word))
+       (and (find-word matrix [x y] direction-southeast (reverse word)) (find-word matrix [(+ x 2) y] direction-southwest (reverse word))))
     1 0))
 
 (defn world-cross-search
