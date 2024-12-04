@@ -24,17 +24,17 @@
    direction-southwest])
 
 (defn find-word [matrix start-pos direction word]
-  (if (reduce
-       (fn [current-pos, char]
-         (if (not= char (get-x-y matrix current-pos)) (reduced false) (apply direction current-pos)))
-       start-pos
-       word) 1 0))
+  (reduce
+   (fn [current-pos, char]
+     (if (not= char (get-x-y matrix current-pos)) (reduced false) (apply direction current-pos)))
+   start-pos
+   word))
 
 (defn find-word-all-direction [matrix start-pos word]
-  (reduce (fn [total direction] (+ total (find-word matrix start-pos direction word))) 0 directions))
+  (reduce (fn [total direction] (if (find-word matrix start-pos direction word) (inc total) total)) 0 directions))
 
 (defn world-search
-  "should find XMS in matrix"
+  "should find XMAS in matrix"
   [data]
   (let
    [world-search-matrix (create-matrix data)]
@@ -42,3 +42,21 @@
             (for [[y row] (map-indexed vector world-search-matrix)
                   [x _] (map-indexed vector row)]
               (find-word-all-direction world-search-matrix [x y] "XMAS")))))
+
+(defn find-word-cross [matrix [x y] word]
+  (if (or
+       (and (find-word matrix [x y] direction-southeast word) (find-word matrix [x (+ y 2)] direction-northeast word))
+       (and (find-word matrix [x y] direction-northeast word) (find-word matrix [(+ x 2) y] direction-northwest word))
+       (and (find-word matrix [x y] direction-northwest word) (find-word matrix [x (- y 2)] direction-southwest word))
+       (and (find-word matrix [x y] direction-southwest word) (find-word matrix [(- x 2) y] direction-southeast word)))
+    1 0))
+
+(defn world-cross-search
+  "should find X MAS in matrix"
+  [data]
+  (let
+   [world-search-matrix (create-matrix data)]
+    (reduce +
+            (for [[y row] (map-indexed vector world-search-matrix)
+                  [x _] (map-indexed vector row)]
+              (find-word-cross world-search-matrix [x y] "MAS")))))
