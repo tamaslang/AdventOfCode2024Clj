@@ -21,34 +21,24 @@
    direction-northeast,
    direction-northwest,
    direction-southeast,
-   direction-southwest]
-)
+   direction-southwest])
 
 (defn find-word [matrix start-pos direction word]
   (if (reduce
-    (fn [current-pos, char]
-      (if (not= char (get-x-y matrix current-pos)) (reduced false) (apply direction current-pos))
-      )
-    start-pos
-    word
-    ) 1 0)
-)
+       (fn [current-pos, char]
+         (if (not= char (get-x-y matrix current-pos)) (reduced false) (apply direction current-pos)))
+       start-pos
+       word) 1 0))
 
 (defn find-word-all-direction [matrix start-pos word]
-  (reduce (fn[total direction] (+ total (find-word matrix start-pos direction word))) 0 directions)
-)
+  (reduce (fn [total direction] (+ total (find-word matrix start-pos direction word))) 0 directions))
 
 (defn world-search
   "should find XMS in matrix"
   [data]
   (let
-    [world-search-matrix (create-matrix data)
-     world-search-posdata (matrix->arr-w-symbol-and-xy world-search-matrix)
-     ]
-    (->>
-      world-search-posdata
-      (map (fn [posdata] (find-word-all-direction world-search-matrix [(:x posdata) (:y posdata)] "XMAS")))
-      (reduce +)
-      )
-    )
-  )
+   [world-search-matrix (create-matrix data)]
+    (reduce +
+            (for [[y row] (map-indexed vector world-search-matrix)
+                  [x _] (map-indexed vector row)]
+              (find-word-all-direction world-search-matrix [x y] "XMAS")))))
