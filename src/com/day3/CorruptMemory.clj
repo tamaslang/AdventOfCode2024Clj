@@ -17,13 +17,13 @@
 
 (defn parse-instructions-with-do-and-don't [instructions]
   (let [[sum _] (reduce (fn [[sum do?], current]
-                            (cond
-                              (= current "don't") [sum false]
-                              (= current "do") [sum true]
-                              do? [(+ sum (eval-mul current)) do?]
-                              :else [sum do?]))
-                          [0 true]
-                          instructions)]
+                          (cond
+                            (= current "don't") [sum false]
+                            (= current "do") [sum true]
+                            do? [(+ sum (eval-mul current)) do?]
+                            :else [sum do?]))
+                        [0 true]
+                        instructions)]
     sum))
 
 (defn find-instructions-task2

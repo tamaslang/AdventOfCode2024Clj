@@ -2,7 +2,7 @@
   (:require [com.utils.InputParsing :refer :all]))
 
 (defn get-x-y [matrix [x y]]
-  (when-let [symbol (get-in matrix [y x])] symbol))
+  (get-in matrix [y x]))
 
 (defn direction-north [x y] [x (dec y)])
 (defn direction-south [x y] [x (inc y)])
