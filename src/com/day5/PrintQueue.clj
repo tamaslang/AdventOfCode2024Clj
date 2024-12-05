@@ -29,12 +29,16 @@
          (map mid)
          (reduce +))))
 
+(defn compare-with-rules [rules x y]
+  (not (nil? (not-empty (set/intersection #{y} (set (rules x)))))))
+
 (defn fix-invalid-queues
   "should fix invalid print queue orders"
   [data]
-  (let [[rules queues] (parse-input data)]
+  (let [[rules queues] (parse-input data)
+        comparator-based-on-rules (partial compare-with-rules rules)]
     (->> queues
          (filter #(not (is-queue-valid? rules %1)))
-         (map #(sort (fn [x y] (not (nil? (not-empty (set/intersection #{y} (set (rules x))))))) %1))
+         (map #(sort comparator-based-on-rules %1))
          (map mid)
          (reduce +))))
