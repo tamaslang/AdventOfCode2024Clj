@@ -5,10 +5,10 @@
 
 (defn parse-input [input-lines]
   (let [[rules-part _ print-queue-part] (partition-by str/blank? input-lines)
-        rules (map #(parse-numbers-in-line-separator #"\|" %1) rules-part)
-        rules-groupped (group-by (fn [[before after]] before) rules)
-        rules-mapped (into {} (map (fn [[key values]] [key (map second values)]) rules-groupped))
-        print-queues (map #(parse-numbers-in-line-separator #"," %1) print-queue-part)]
+        print-queues (map #(parse-numbers-in-line-separator #"," %1) print-queue-part)
+        rules-list (map #(parse-numbers-in-line-separator #"\|" %1) rules-part)
+        rules-grouped (group-by (fn [[before _]] before) rules-list)
+        rules-mapped (into {} (map (fn [[key values]] [key (map second values)]) rules-grouped))]
     [rules-mapped print-queues]))
 
 (defn mid [queue] (nth queue (/ (dec (count queue)) 2)))
