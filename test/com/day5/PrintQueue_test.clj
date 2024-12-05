@@ -36,8 +36,8 @@
                                   "75,29,13"
                                   "75,97,47,61,53"
                                   "61,13,29"
-                                  "97,13,75,29,47"])))))
+                                  "97,13,75,29,47"]))))
 
-(deftest should-solve-for-input-file
-  (testing "Should solve for input file"
-    (is (= 6505 (find-valid-queue (str/split-lines (slurp data-file)))))))
+  (deftest should-solve-for-input-file
+    (testing "Should solve for input file"
+      (is (= 6505 (find-valid-queue (str/split-lines (slurp data-file))))))))
