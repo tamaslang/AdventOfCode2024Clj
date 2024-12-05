@@ -12,6 +12,12 @@
    (str/split number-line #"\s+")
    (map #(Long/parseLong %))))
 
+(defn parse-numbers-in-line-separator
+  [separator number-line]
+  (->>
+   (str/split number-line separator)
+   (map #(Long/parseLong %))))
+
 (defn long-str [& strings] (str/join "\n" strings))
 
 (defn create-matrix [string-lines]
