@@ -30,7 +30,7 @@
          (reduce +))))
 
 (defn compare-with-rules [rules x y]
-  (not (nil? (not-empty (set/intersection #{y} (set (rules x)))))))
+  (empty? (set/intersection #{y} (set (rules x)))))
 
 (defn fix-invalid-queues
   "should fix invalid print queue orders"
