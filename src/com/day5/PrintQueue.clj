@@ -25,5 +25,16 @@
   [data]
   (let [[rules queues] (parse-input data)]
     (->> queues
-         (map #(if (is-queue-valid? rules %1) (mid %1) 0))
+         (filter #(is-queue-valid? rules %1))
+         (map mid)
+         (reduce +))))
+
+(defn fix-invalid-queues
+  "should fix invalid print queue orders"
+  [data]
+  (let [[rules queues] (parse-input data)]
+    (->> queues
+         (filter #(not (is-queue-valid? rules %1)))
+         (map #(sort (fn [x y] (not (nil? (not-empty (set/intersection #{y} (set (rules x))))))) %1))
+         (map mid)
          (reduce +))))
