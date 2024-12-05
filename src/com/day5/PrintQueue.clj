@@ -24,9 +24,9 @@
   "should find valid print queue orders"
   [data]
   (let [[rules queues] (parse-input data)
-        is-valid-check (partial is-queue-valid? rules)]
+        is-valid-cond (partial is-queue-valid? rules)]
     (->> queues
-         (filter is-valid-check)
+         (filter is-valid-cond)
          (map mid)
          (reduce +))))
 
@@ -37,9 +37,11 @@
   "should fix invalid print queue orders"
   [data]
   (let [[rules queues] (parse-input data)
-        comparator-based-on-rules (partial compare-with-rules rules)]
+        comparator-based-on-rules (partial compare-with-rules rules)
+        make-it-correct #(sort comparator-based-on-rules %1)
+        is-invalid-cond #(not (is-queue-valid? rules %1))]
     (->> queues
-         (filter #(not (is-queue-valid? rules %1)))
-         (map #(sort comparator-based-on-rules %1))
+         (filter is-invalid-cond)
+         (map make-it-correct)
          (map mid)
          (reduce +))))
