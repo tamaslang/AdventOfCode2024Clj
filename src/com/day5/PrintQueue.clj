@@ -23,9 +23,10 @@
 (defn find-valid-queue
   "should find valid print queue orders"
   [data]
-  (let [[rules queues] (parse-input data)]
+  (let [[rules queues] (parse-input data)
+        is-valid-check (partial is-queue-valid? rules)]
     (->> queues
-         (filter #(is-queue-valid? rules %1))
+         (filter is-valid-check)
          (map mid)
          (reduce +))))
 
