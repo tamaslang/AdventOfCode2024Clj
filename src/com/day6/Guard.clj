@@ -15,20 +15,6 @@
   [(+ (first current-pos) (first direction))
    (+ (second current-pos) (second direction))])
 
-(defn walk [matrix start-pos direction]
-  (reduce (fn [[visited current-pos direction] _]
-            (let [visited* (conj visited current-pos)
-                  whats-ahead (matrix->get-xy matrix (move current-pos direction))
-                  direction* (if (= whats-ahead \#) (turn-right direction) direction)]
-              (if (nil? whats-ahead) (reduced visited*) [visited* (move current-pos direction*) direction*]))) [#{} start-pos direction] (cycle (range 0 1))))
-
-(defn count-patrol-field
-  "should count the fields the guard patrol"
-  [data]
-  (let [matrix (create-matrix data)
-        start-pos (matrix->find-first matrix \^)]
-    (count (walk matrix start-pos (first directions)))))
-
 (defn find-next [matrix position direction obsticle]
   (reduce (fn [[position direction], _]
             (let
@@ -36,6 +22,20 @@
               next-char (matrix->get-xy matrix next-position)]
               (if (or (= next-position obsticle) (= next-char \#)) [position (turn-right direction)] (reduced [next-position direction])))) [position direction]
           (range 5)))
+
+(defn walk [matrix start-pos direction]
+  (reduce (fn [[visited [guard-position guard-direction]] _]
+            (if (nil? (matrix->get-xy matrix guard-position))
+              (reduced visited)
+              [(conj visited guard-position) (find-next matrix guard-position guard-direction [])]))
+          [#{} [start-pos direction]] (cycle (range 1))))
+
+(defn count-patrol-field
+  "should count the fields the guard patrol"
+  [data]
+  (let [matrix (create-matrix data)
+        start-pos (matrix->find-first matrix \^)]
+    (count (walk matrix start-pos (first directions)))))
 
 (defn walk-circular? [matrix start-pos direction obsticle]
   (reduce (fn [[path [guard-position guard-direction]] _]
