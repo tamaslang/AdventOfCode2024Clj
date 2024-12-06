@@ -1,9 +1,6 @@
 (ns com.day4.WorldSearch
   (:require [com.utils.InputParsing :refer :all]))
 
-(defn get-x-y [matrix [x y]]
-  (get-in matrix [y x]))
-
 (defn direction-north [x y] [x (dec y)])
 (defn direction-south [x y] [x (inc y)])
 (defn direction-west [x y] [(dec x) y])

@@ -28,6 +28,9 @@
         [j key] (map-indexed vector row)]
     {:symbol key :x j :y i}))
 
+(defn get-x-y [matrix [x y]]
+  (get-in matrix [y x]))
+
 (defn print-matrix [matrix]
   (doseq [line matrix]
     (println (apply str line))))
