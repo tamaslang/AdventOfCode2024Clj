@@ -29,32 +29,28 @@
         start-pos (matrix->find-first matrix \^)]
     (count (walk matrix start-pos (first directions)))))
 
-(defn is-circular? [matrix start-pos direction]
-  (reduce (fn [[visited current-pos direction] _]
-            (let [visited* (conj visited [current-pos direction])
-                  pos-forward (move current-pos direction)
-                  whats-ahead (matrix->get-xy matrix pos-forward)
-                  direction* (if (= whats-ahead \#) (turn-right direction) direction)]
-              (cond
-                (nil? whats-ahead) (reduced false)
-                (not-empty (set/intersection visited* #{[pos-forward direction*]})) (reduced true)
-                :else [visited* (move current-pos direction*) direction*])))
-          [#{} start-pos direction]
-          (cycle (range 0 1))))
+(defn find-next [matrix position direction obsticle]
+  (reduce (fn [[position direction], _]
+            (let
+             [next-position (move position direction)
+              next-char (matrix->get-xy matrix next-position)]
+              (if (or (= next-position obsticle) (= next-char \#)) [position (turn-right direction)] (reduced [next-position direction])))) [position direction]
+          (range 5)))
 
-(defn walk-to-find-circular [matrix start-pos direction]
-  (->>
-   (let
-    [possible-blocks (remove #{start-pos (move start-pos (first directions))} (walk matrix start-pos direction))]
-     (count (filter (fn [possible-block] (is-circular? (matrix->update-xy matrix possible-block \#) start-pos direction)) possible-blocks)))))
+(defn walk-circular? [matrix start-pos direction obsticle]
+  (reduce (fn [[path [guard-position guard-direction]] _]
+            (cond
+              (not-empty (set/intersection path #{[guard-position guard-direction]})) (reduced true) ; LOOP!
+              (nil? (matrix->get-xy matrix guard-position)) (reduced false)
+              :else [(conj path [guard-position guard-direction]) (find-next matrix guard-position guard-direction obsticle)]))
+          [#{} [start-pos direction]]
+          (cycle (range 1))))
 
 (defn count-circulars-when-adding-block
   "should count the fields the guard patrol"
   [data]
-  (let [matrix (create-matrix data)
+  (let [direction-north (first directions)
+        matrix (create-matrix data)
         start-pos (matrix->find-first matrix \^)
-        possible-blocks (remove #{start-pos (move start-pos (first directions))} (walk matrix start-pos (first directions)))]
-    (->> possible-blocks
-         (map #(matrix->update-xy matrix %1 \#))
-         (filter #(is-circular? %1 start-pos (first directions)))
-         (count))))
+        possible-obsticle-positions (remove #{start-pos} (walk matrix start-pos direction-north))]
+    (reduce + (pmap (fn [possible-obsticle] (if (walk-circular? matrix start-pos direction-north possible-obsticle) 1 0)) possible-obsticle-positions))))
