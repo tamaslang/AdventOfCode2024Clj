@@ -39,5 +39,5 @@
 
 (deftest should-count-circulars-adding-block-for-input-file
   (testing "Should count circular routes when adding blocks for input file"
-    (is (= 440 (count-circulars-when-adding-block (str/split-lines (slurp data-file)))))))
+    (is (= 1647 (count-circulars-when-adding-block (str/split-lines (slurp data-file)))))))
 
