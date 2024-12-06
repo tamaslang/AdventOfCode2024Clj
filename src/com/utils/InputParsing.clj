@@ -28,8 +28,33 @@
         [j key] (map-indexed vector row)]
     {:symbol key :x j :y i}))
 
-(defn get-x-y [matrix [x y]]
+(defn matrix->get-xy [matrix [x y]]
   (get-in matrix [y x]))
+
+(defn matrix->update-xy [matrix [x y] char]
+  (update-in matrix [y x] (fn [_] char)))
+
+(defn matrix->find-first [matrix char]
+  (let
+   [size-y (count matrix)
+    size-x (count (first matrix))]
+    (reduce (fn [_, count]
+              (let
+               [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]]
+                (if (= (matrix->get-xy matrix pos) char) (reduced pos) ())))
+            0
+            (range 0 (* size-x size-y)))))
+
+(defn matrix->find-all [matrix char]
+  (let
+   [size-y (count matrix)
+    size-x (count (first matrix))]
+    (reduce (fn [found, count]
+              (let
+               [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]]
+                (if (= (matrix->get-xy matrix pos) char) (conj found pos) found)))
+            #{}
+            (range 0 (* size-x size-y)))))
 
 (defn print-matrix [matrix]
   (doseq [line matrix]

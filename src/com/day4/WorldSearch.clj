@@ -23,7 +23,7 @@
 (defn find-word [matrix start-pos direction word]
   (reduce
    (fn [current-pos, char]
-     (if (not= char (get-x-y matrix current-pos)) (reduced false) (apply direction current-pos)))
+     (if (not= char (matrix->get-xy matrix current-pos)) (reduced false) (apply direction current-pos)))
    start-pos
    word))
 
