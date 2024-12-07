@@ -9,8 +9,8 @@
 
 (deftest should-solve-in-example
   (testing "Should solve"
-    (is (= 0 (solve ["3   4"])))))
+    (is (= 0 (solve-1 ["3   4"])))))
 
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
-    (is (= 0 (solve (str/split-lines (slurp data-file)))))))
+    (is (= 0 (solve-1 (str/split-lines (slurp data-file)))))))
