@@ -28,7 +28,7 @@
             (if (nil? (matrix->get-xy matrix guard-position))
               (reduced visited)
               [(conj visited guard-position) (find-next matrix guard-position guard-direction [])]))
-          [#{} [start-pos direction]] (cycle (range 1))))
+          [#{} [start-pos direction]] (range)))
 
 (defn count-patrol-field
   "should count the fields the guard patrol"
@@ -44,7 +44,7 @@
               (nil? (matrix->get-xy matrix guard-position)) (reduced false)
               :else [(conj path [guard-position guard-direction]) (find-next matrix guard-position guard-direction obsticle)]))
           [#{} [start-pos direction]]
-          (cycle (range 1))))
+          (range)))
 
 (defn count-circulars-when-adding-block
   "should count the fields the guard patrol"

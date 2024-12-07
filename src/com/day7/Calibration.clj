@@ -22,7 +22,6 @@
       (flatten)
       (filter #(<= %1 threshold))
       (into #{})))
-
    #{(first components)}
    (rest components)))
 
