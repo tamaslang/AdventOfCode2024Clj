@@ -1,5 +1,6 @@
 (ns com.day7.Calibration
-  (:require [com.utils.InputParsing :refer :all]
+  (:require [clojure.set :as set]
+            [com.utils.InputParsing :refer :all]
             [clojure.string :as str]))
 
 (defn parse-input-line [input-line]
@@ -12,18 +13,21 @@
 (def task-1-functions [+ *])
 (def task-2-functions [+ * append])
 
-(defn try-to-combine [functions result components]
-  (def results (reduce
-                (fn [temp-results, last-nr]
-                  (->>
-                   temp-results
-                   (map (fn [temp-result] ((apply juxt functions) temp-result last-nr)))
-                   (flatten)
-                   (filter #(<= %1 result))))
-                [(first components)]
-                (rest components)))
+(defn combine-all [functions components threshold]
+  (reduce
+   (fn [temp-results, last-nr]
+     (->>
+      temp-results
+      (map (fn [temp-result] ((apply juxt functions) temp-result last-nr)))
+      (flatten)
+      (filter #(<= %1 threshold))
+      (into #{})))
 
-  (if (not-empty (filter #{result} results)) result 0))
+   #{(first components)}
+   (rest components)))
+
+(defn result-or-zero-if-invalid [functions expected-result components]
+  (if (contains? (combine-all functions components expected-result) expected-result) expected-result 0))
 
 (defn find-calibration-result
   "should find solution"
@@ -31,5 +35,5 @@
   (->>
    data
    (map parse-input-line)
-   (map (fn [[result components]] (try-to-combine combine-functions result components)))
+   (pmap (fn [[result components]] (result-or-zero-if-invalid combine-functions result components)))
    (reduce +)))
