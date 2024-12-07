@@ -9,7 +9,7 @@
 
 (deftest should-find-calibration-result-for-example
   (testing "Should find calibration result for example"
-    (is (= 3457 (find-calibration-result task-1-functions ["190: 10 19"
+    (is (= 3749 (find-calibration-result task-1-functions ["190: 10 19"
                                                            "3267: 81 40 27"
                                                            "83: 17 5"
                                                            "156: 15 6"

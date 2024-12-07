@@ -1,7 +1,6 @@
 (ns com.day7.Calibration
   (:require [com.utils.InputParsing :refer :all]
-            [clojure.string :as str]
-            [clojure.java.io :as io]))
+            [clojure.string :as str]))
 
 (defn parse-input-line [input-line]
   (let
