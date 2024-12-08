@@ -11,66 +11,62 @@
     [[(- l1x dx) (- l1y dy)]
      [(+ l2x dx) (+ l2y dy)]]))
 
-(defn find-antinodes-for-locations [[dimension-x dimension-y] [_ locations]]
+(defn valid-pos? [dimension [x y]]
+  (and (<= 0 x (dec dimension)) (<= 0 y (dec dimension))))
+
+(defn find-antinodes-for-locations [dimension [_ locations]]
   (->>
    locations
    combine-all-items-in-list
-   (map find-antinodes)
-   (apply concat)
-   (into #{})
-   (filter #(and (<= 0 (first %1) (dec dimension-x)) (<= 0 (last %1) (dec dimension-y))))))
+   (mapcat find-antinodes)
+   set
+   (filter #(valid-pos? dimension %1))))
 
 (defn unique-antinode-locations
   "should find unique antinode locations"
   [data]
   (let [matrix (create-matrix data)
-        dimension-y (count matrix)
-        dimension-x (count (first matrix))
+        dimension (count matrix)
         antennas (matrix->find-all-with-fmatching matrix #(not= \. %1))
         antennas-grouped-by-id (group-by #(first %1) antennas)
         antenna-positions-by-id (map (fn [[key values]] [key (map second values)]) antennas-grouped-by-id)]
     (->>
      antenna-positions-by-id
-     (mapv #(find-antinodes-for-locations [dimension-x dimension-y] %))
-     (apply concat)
-     (into #{})
-     (count))))
+     (mapcat #(find-antinodes-for-locations dimension %))
+     set
+     count)))
 
 ; TASK 2
-(defn collect-antinodes-loop [[dimension-x dimension-y] [dx dy] [x y]]
+(defn collect-antinodes-loop [f-valid-pos? [dx dy] [x y]]
   (reduce (fn [antinodes, _]
             (let [[last-x last-y] (last antinodes)
                   ax (+ last-x dx) ay (+ last-y dy)]
-              (if (and (<= 0 ax (dec dimension-x)) (<= 0 ay (dec dimension-y))) (conj antinodes [ax ay]) (reduced antinodes)))) [[x y]] (range)))
+              (if (f-valid-pos? [ax ay]) (conj antinodes [ax ay]) (reduced antinodes)))) [[x y]] (range)))
 
-(defn find-antinodes-with-loop [[dimension-x dimension-y] [[l1x l1y] [l2x l2y]]]
+(defn find-antinodes-with-loop [f-valid-pos? [[l1x l1y] [l2x l2y]]]
   (let [dx (- l2x l1x)
         dy (- l2y l1y)]
     (set/union
-     (collect-antinodes-loop [dimension-x dimension-y] [(* -1 dx) (* -1 dy)] [l1x l1y])
-     (collect-antinodes-loop [dimension-x dimension-y] [dx dy] [l2x l2y]))))
+     (collect-antinodes-loop f-valid-pos? [(* -1 dx) (* -1 dy)] [l1x l1y])
+     (collect-antinodes-loop f-valid-pos? [dx dy] [l2x l2y]))))
 
-(defn find-antinodes-for-locations-task2 [[dimension-x dimension-y] [_ locations]]
+(defn find-antinodes-for-locations-task2 [f-valid-pos? [_ locations]]
   (->>
    locations
    combine-all-items-in-list
-   (map #(find-antinodes-with-loop [dimension-x dimension-y] %))
-   (apply concat)
-   (into #{})
-   (filter #(and (<= 0 (first %1) (dec dimension-x)) (<= 0 (last %1) (dec dimension-y))))))
+   (mapcat #(find-antinodes-with-loop f-valid-pos? %))
+   set))
 
 (defn unique-antinode-locations-with-resonance
   "should find unique antinode locations with resonance"
   [data]
   (let [matrix (create-matrix data)
-        dimension-y (count matrix)
-        dimension-x (count (first matrix))
+        dimension (count matrix)
         antennas (matrix->find-all-with-fmatching matrix #(not= \. %1))
         antennas-grouped-by-id (group-by #(first %1) antennas)
         antenna-positions-by-id (map (fn [[key values]] [key (map second values)]) antennas-grouped-by-id)]
     (->>
      antenna-positions-by-id
-     (mapv #(find-antinodes-for-locations-task2 [dimension-x dimension-y] %))
-     (apply concat)
-     (into #{})
-     (count))))
+     (mapcat #(find-antinodes-for-locations-task2 (partial valid-pos? dimension) %))
+     set
+     count)))
