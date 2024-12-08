@@ -5,24 +5,23 @@
             [clojure.java.io :as io]))
 
 (def data-file (io/resource
-                 "resources/day8/input.txt"))
-
+                "resources/day8/input.txt"))
 
 (deftest should-find-unique-antiondes-in-example
   (testing "Should find unique antinodes"
     (is (= 14 (unique-antinode-locations
-                    ["............"
-                     "........0..."
-                     ".....0......"
-                     ".......0...."
-                     "....0......."
-                     "......A....."
-                     "............"
-                     "............"
-                     "........A..."
-                     ".........A.."
-                     "............"
-                     "............"])))))
+               ["............"
+                "........0..."
+                ".....0......"
+                ".......0...."
+                "....0......."
+                "......A....."
+                "............"
+                "............"
+                "........A..."
+                ".........A.."
+                "............"
+                "............"])))))
 
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"

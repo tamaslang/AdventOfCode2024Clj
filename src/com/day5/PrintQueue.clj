@@ -13,7 +13,6 @@
                    (into {}))]
     [rules queues]))
 
-
 (defn mid [queue] (nth queue (/ (dec (count queue)) 2)))
 
 (defn is-queue-valid? [rules queue]
