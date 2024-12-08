@@ -8,7 +8,7 @@
                 "resources/day8/input.txt"))
 
 (deftest should-find-unique-antiondes-in-example
-  (testing "Should find unique antinodes"
+  (testing "Should find unique antinodes in example"
     (is (= 14 (unique-antinode-locations
                ["............"
                 "........0..."
@@ -23,6 +23,27 @@
                 "............"
                 "............"])))))
 
-(deftest should-solve-for-input-file
-  (testing "Should solve for input file"
+(deftest should-find-unique-antiondes-in-input-file
+  (testing "Should find unique antinodes in input file"
     (is (= 271 (unique-antinode-locations (str/split-lines (slurp data-file)))))))
+
+; TASK2
+(deftest should-find-unique-antiondes-with-resonance-in-example
+  (testing "Should find unique antinodes with resonance in example"
+    (is (= 34 (unique-antinode-locations-with-resonance
+               ["............"
+                "........0..."
+                ".....0......"
+                ".......0...."
+                "....0......."
+                "......A....."
+                "............"
+                "............"
+                "........A..."
+                ".........A.."
+                "............"
+                "............"])))))
+
+(deftest should-find-unique-antiondes-with-resonnce-in-input-file
+  (testing "Should find unique antinodes with resonance in input file"
+    (is (= -1 (unique-antinode-locations-with-resonance (str/split-lines (slurp data-file)))))))
