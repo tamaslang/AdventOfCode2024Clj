@@ -37,24 +37,24 @@
      (count))))
 
 ; TASK 2
-(defn collect-antinodes-loop [loop [dimension-x dimension-y] [dx dy] [x y]]
+(defn collect-antinodes-loop [[dimension-x dimension-y] [dx dy] [x y]]
   (reduce (fn [antinodes, _]
             (let [[last-x last-y] (last antinodes)
                   ax (+ last-x dx) ay (+ last-y dy)]
-              (if (and (<= 0 ax (dec dimension-x)) (<= 0 ay (dec dimension-y))) (conj antinodes [ax ay]) (reduced antinodes)))) [[x y]]  (range loop)))
+              (if (and (<= 0 ax (dec dimension-x)) (<= 0 ay (dec dimension-y))) (conj antinodes [ax ay]) (reduced antinodes)))) [[x y]] (range)))
 ;
-(defn find-antinodes-with-loop [loop [dimension-x dimension-y] [[l1x l1y] [l2x l2y]]]
+(defn find-antinodes-with-loop [[dimension-x dimension-y] [[l1x l1y] [l2x l2y]]]
   (let [dx (- l2x l1x)
         dy (- l2y l1y)]
     (set/union
-     (collect-antinodes-loop loop [dimension-x dimension-y] [(* -1 dx) (* -1 dy)] [l1x l1y])
-     (collect-antinodes-loop loop [dimension-x dimension-y] [dx dy] [l2x l2y]))))
+     (collect-antinodes-loop [dimension-x dimension-y] [(* -1 dx) (* -1 dy)] [l1x l1y])
+     (collect-antinodes-loop [dimension-x dimension-y] [dx dy] [l2x l2y]))))
 
 (defn find-antinodes-for-locations-task2 [[dimension-x dimension-y] [_ locations]]
   (->>
    locations
    combine-all-items-in-list
-   (map #(find-antinodes-with-loop Integer/MAX_VALUE [dimension-x dimension-y] %))
+   (map #(find-antinodes-with-loop [dimension-x dimension-y] %))
    (apply concat)
    (into #{})
    (filter #(and (<= 0 (first %1) (dec dimension-x)) (<= 0 (last %1) (dec dimension-y))))))

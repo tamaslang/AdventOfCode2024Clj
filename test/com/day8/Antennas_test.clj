@@ -46,4 +46,4 @@
 
 (deftest should-find-unique-antiondes-with-resonnce-in-input-file
   (testing "Should find unique antinodes with resonance in input file"
-    (is (= -1 (unique-antinode-locations-with-resonance (str/split-lines (slurp data-file)))))))
+    (is (= 994 (unique-antinode-locations-with-resonance (str/split-lines (slurp data-file)))))))
