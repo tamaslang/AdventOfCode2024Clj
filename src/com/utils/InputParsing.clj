@@ -1,5 +1,6 @@
 (ns com.utils.InputParsing
-  (:require [clojure.string :as str]))
+  (:require [clojure.set :as set]
+            [clojure.string :as str]))
 
 (defn digitsToNumber
   "convert array of digits to a number"
@@ -53,6 +54,19 @@
               (let
                [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]]
                 (if (= (matrix->get-xy matrix pos) char) (conj found pos) found)))
+            #{}
+            (range 0 (* size-x size-y)))))
+
+(defn matrix->find-all-with-fmatching [matrix char-matching?]
+  (let
+    [size-y (count matrix)
+     size-x (count (first matrix))]
+    (reduce (fn [found, count]
+              (let
+                [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]
+                 char-at-pos (matrix->get-xy matrix pos)
+                 ]
+                (if (char-matching? char-at-pos) (conj found [char-at-pos pos]) found)))
             #{}
             (range 0 (* size-x size-y)))))
 
