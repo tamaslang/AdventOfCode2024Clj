@@ -42,7 +42,7 @@
             (let [[last-x last-y] (last antinodes)
                   ax (+ last-x dx) ay (+ last-y dy)]
               (if (and (<= 0 ax (dec dimension-x)) (<= 0 ay (dec dimension-y))) (conj antinodes [ax ay]) (reduced antinodes)))) [[x y]] (range)))
-;
+
 (defn find-antinodes-with-loop [[dimension-x dimension-y] [[l1x l1y] [l2x l2y]]]
   (let [dx (- l2x l1x)
         dy (- l2y l1y)]
