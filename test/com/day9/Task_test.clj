@@ -7,10 +7,10 @@
 (def data-file (io/resource
                 "resources/day9/input.txt"))
 
-(deftest should-solve-in-example
-  (testing "Should solve"
-    (is (= 0 (solve ["3   4"])))))
+(deftest should-calculate-checksum-for-memory-in-example
+  (testing "Should calculate checksum for memory in example"
+    (is (= 1928 (calculate-checksum-for-memory "2333133121414131402")))))
 
-(deftest should-solve-for-input-file
-  (testing "Should solve for input file"
-    (is (= 0 (solve (str/split-lines (slurp data-file)))))))
+(deftest should-calculate-checksum-for-memory-in-input-file
+  (testing "Should calculate checksum for memory in input file"
+    (is (= 6461289671426 (calculate-checksum-for-memory (slurp data-file))))))
