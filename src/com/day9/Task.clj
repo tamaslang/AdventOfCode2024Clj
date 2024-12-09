@@ -5,7 +5,7 @@
 
 (defn checksum-for-memory [memory]
   (loop
-   [memory memory
+   [memory memory ; [1 2 3 4 5]
     logical-idx 0
     idx 0
     move-idx (dec (count memory))
@@ -38,9 +38,6 @@
     (checksum-for-memory memory)))
 
 ; TASK 2
-(defn insert-at-index [v index elem]
-  (vec (concat (subvec v 0 index) [elem] (subvec v index))))
-
 (defn calculate-checksum-for-memory-move-blocks
   "should find solution"
   [data]
@@ -50,7 +47,7 @@
                            (map (fn [[id size]] (if (even? id) [(/ id 2) size] [-1 size])))
                            (into []))]
 
-    (def writeable-memory (java.util.LinkedList. memory-mapped))
+    (def writeable-memory (java.util.ArrayList. memory-mapped))
 
     (reduce (fn [_ [file-id file-size]]
               (let
@@ -59,9 +56,9 @@
                 file-position (.lastIndexOf writeable-memory [file-id file-size])]
                 (when (> file-position space-position -1)
                   ; remove file
-                  (.remove #^java.util.LinkedList writeable-memory [file-id file-size])
+                  (.remove #^java.util.List writeable-memory [file-id file-size])
                   ; remove space
-                  (.remove #^java.util.LinkedList writeable-memory (int space-position))
+                  (.remove #^java.util.List writeable-memory (int space-position))
                   ; add file to where space pos
                   (.add writeable-memory space-position [file-id file-size])
                   ; insert remaining space back
