@@ -51,21 +51,27 @@
                            (map (fn [[id size]] (if (even? id) [(/ id 2) size] [-1 size])))
                            (into []))]
 
-    (def writeable-memory (atom memory-mapped))
+    (def writeable-memory (java.util.LinkedList. memory-mapped))
 
     (reduce (fn [_ [file-id file-size]]
               (let
-               [next-free-space (first (filter (fn [[space-id space-size]] (and (= space-id -1) (>= space-size file-size))) @writeable-memory))
-                space-position (.indexOf @writeable-memory next-free-space)
-                file-position (.lastIndexOf @writeable-memory [file-id file-size])]
+               [next-free-space (first (filter (fn [[space-id space-size]] (and (= space-id -1) (>= space-size file-size))) writeable-memory))
+                space-position (.indexOf writeable-memory next-free-space)
+                file-position (.lastIndexOf writeable-memory [file-id file-size])]
                 (when (> file-position space-position -1)
-                  (swap! writeable-memory assoc space-position [file-id file-size])
-                  (swap! writeable-memory assoc file-position [-1 file-size])
-                  (swap! writeable-memory
-                         #(insert-at-index % (inc space-position) [-1 (- (second next-free-space) file-size)])))))
+                  ; remove file
+                  (.remove #^java.util.LinkedList writeable-memory [file-id file-size])
+                  ; remove space
+                  (.remove #^java.util.LinkedList writeable-memory (int space-position))
+                  ; add file to where space pos
+                  (.add writeable-memory space-position [file-id file-size])
+                  ; insert remaining space back
+                  (.add writeable-memory (inc space-position) [-1 (- (second next-free-space) file-size)])
+                  ; add space to where file was
+                  (.add writeable-memory file-position [-1 file-size]))))
             [] (take-nth 2 (reverse memory-mapped))))
   (->>
-   @writeable-memory
+   writeable-memory
    (map (fn [[id size]] (if (> id -1) (repeat size id) (repeat size 0))))
    (flatten)
    (map-indexed (fn [index id] (* index id)))
