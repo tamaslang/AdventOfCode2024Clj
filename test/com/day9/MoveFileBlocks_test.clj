@@ -1,6 +1,6 @@
-(ns com.day9.Task-test
+(ns com.day9.MoveFileBlocks-test
   (:require [clojure.test :refer :all]
-            [com.day9.Task :refer :all]
+            [com.day9.MoveFileBlocks :refer :all]
             [clojure.string :as str]
             [clojure.java.io :as io]))
 
