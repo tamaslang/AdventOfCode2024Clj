@@ -5,7 +5,7 @@
             [clojure.java.io :as io]))
 
 (def data-file (io/resource
-                 "resources/day10/input.txt"))
+                "resources/day10/input.txt"))
 
 (deftest should-solve-in-example
   (testing "Should solve"
