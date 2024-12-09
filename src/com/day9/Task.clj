@@ -10,7 +10,6 @@
     idx 0
     move-idx (dec (count memory))
     total 0]
-    (println inc "|" move-idx)
     (cond
       (> idx move-idx) total
       (even? idx) ; FILE!
