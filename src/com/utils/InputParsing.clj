@@ -32,8 +32,8 @@
 (defn matrix->get-xy [matrix [x y]]
   (get-in matrix [y x]))
 
-(defn matrix->get-nr-at-xy [matrix [x y]]
-  (when-let [char (get-in matrix [y x])] [(Integer/parseInt (str char)) [x y]]))
+(defn matrix->get-char-at-xy [matrix [x y]]
+  (when-let [char (get-in matrix [y x])] [char [x y]]))
 
 (defn matrix->update-xy [matrix [x y] char]
   (update-in matrix [y x] (fn [_] char)))

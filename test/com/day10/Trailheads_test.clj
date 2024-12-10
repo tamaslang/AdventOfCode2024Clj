@@ -20,4 +20,4 @@
 
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
-    (is (= 0 (find-trailheads (str/split-lines (slurp data-file)))))))
+    (is (= 816 (find-trailheads (str/split-lines (slurp data-file)))))))

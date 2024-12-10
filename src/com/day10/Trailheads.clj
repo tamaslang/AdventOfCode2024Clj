@@ -3,21 +3,22 @@
 
 (defn matrix->adjacents [matrix [height [x y]]]
   (keep identity [;above
-                  (matrix->get-nr-at-xy matrix [x (dec y)])
+                  (matrix->get-char-at-xy matrix [x (dec y)])
                   ; same row
-                  (matrix->get-nr-at-xy matrix [(dec x) y])
-                  (matrix->get-nr-at-xy matrix [(inc x) y])
+                  (matrix->get-char-at-xy matrix [(dec x) y])
+                  (matrix->get-char-at-xy matrix [(inc x) y])
                   ; row below
-                  (matrix->get-nr-at-xy matrix [x (inc y)])]))
+                  (matrix->get-char-at-xy matrix [x (inc y)])]))
 
 (defn find-end-from [matrix starting-position]
   (set (reduce (fn [next-positions next-slope]
+                 (println "next slope " next-slope)
+                 (println "next-positions " next-positions)
                  (let
                   [adjacents (mapcat #(matrix->adjacents matrix %) next-positions)
                    next-positions (filter (fn [[height _]] (= height next-slope)) adjacents)]
                    next-positions))
-
-               [starting-position] (range 1 10))))
+               [starting-position] "123456789")))
 
 (defn find-trailheads
   "should find trailheads"
