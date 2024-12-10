@@ -26,8 +26,8 @@
     starting-points (matrix->find-all-with-fmatching trailmap #(= % \0))]
     (->>
      starting-points
-     (map #(set (find-route-ends-from trailmap %1))) ; use SET for uniqueness
-     (map count)
+     (map #(find-route-ends-from trailmap %1))
+     (map #(count (set %))) ; use SET for uniqueness
      (reduce +))))
 
 (defn find-distinct-route-trailheads-scores
