@@ -10,13 +10,13 @@
 (deftest should-find-trailheads-in-example
   (testing "Should find trailheads in example"
     (is (= 36 (find-trailhead-scores ["89010123"
-                                "78121874"
-                                "87430965"
-                                "96549874"
-                                "45678903"
-                                "32019012"
-                                "01329801"
-                                "10456732"])))))
+                                      "78121874"
+                                      "87430965"
+                                      "96549874"
+                                      "45678903"
+                                      "32019012"
+                                      "01329801"
+                                      "10456732"])))))
 
 (deftest should-find-trailheads-in-input-file
   (testing "Should find trailheads in input file"
