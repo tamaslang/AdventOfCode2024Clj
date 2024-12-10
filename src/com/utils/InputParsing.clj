@@ -32,6 +32,9 @@
 (defn matrix->get-xy [matrix [x y]]
   (get-in matrix [y x]))
 
+(defn matrix->get-nr-at-xy [matrix [x y]]
+  (when-let [char (get-in matrix [y x])] [(Integer/parseInt (str char)) [x y]]))
+
 (defn matrix->update-xy [matrix [x y] char]
   (update-in matrix [y x] (fn [_] char)))
 
@@ -66,6 +69,18 @@
                [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]
                 char-at-pos (matrix->get-xy matrix pos)]
                 (if (char-matching? char-at-pos) (conj found [char-at-pos pos]) found)))
+            #{}
+            (range 0 (* size-x size-y)))))
+
+(defn matrix->find-all-nr-with-fmatching [matrix char-matching?]
+  (let
+   [size-y (count matrix)
+    size-x (count (first matrix))]
+    (reduce (fn [found, count]
+              (let
+               [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]
+                char-at-pos (matrix->get-xy matrix pos)]
+                (if (char-matching? char-at-pos) (conj found [(Integer/parseInt (str char-at-pos)) pos]) found)))
             #{}
             (range 0 (* size-x size-y)))))
 
