@@ -18,8 +18,8 @@
                    next-positions))
                [starting-position] "123456789")))
 
-(defn find-trailheads
-  "should find trailheads"
+(defn find-trailhead-scores
+  "should find trailheads with unique ends"
   [data]
   (let
    [trailmap (create-matrix data)
@@ -42,8 +42,8 @@
         [[starting-position]]
         "123456789")))
 
-(defn find-trailheads-scores
-  "should find trailheads"
+(defn find-distinct-route-trailheads-scores
+  "should find distinct route trailheads scores"
   [data]
   (let
    [trailmap (create-matrix data)

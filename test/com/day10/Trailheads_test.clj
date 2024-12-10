@@ -9,7 +9,7 @@
 
 (deftest should-find-trailheads-in-example
   (testing "Should find trailheads in example"
-    (is (= 36 (find-trailheads ["89010123"
+    (is (= 36 (find-trailhead-scores ["89010123"
                                 "78121874"
                                 "87430965"
                                 "96549874"
@@ -20,11 +20,11 @@
 
 (deftest should-find-trailheads-in-input-file
   (testing "Should find trailheads in input file"
-    (is (= 816 (find-trailheads (str/split-lines (slurp data-file)))))))
+    (is (= 816 (find-trailhead-scores (str/split-lines (slurp data-file)))))))
 
 (deftest should-find-trailheads-with-distinct-route-in-example-1
   (testing "Should find trailheads with distinct route in example 1"
-    (is (= 3 (find-trailheads-scores
+    (is (= 3 (find-distinct-route-trailheads-scores
               [".....0."
                "..4321."
                "..5..2."
@@ -35,7 +35,7 @@
 
 (deftest should-find-trailheads-with-distinct-route-in-example-2
   (testing "Should find trailheads with distinct route in example 2"
-    (is (= 13 (find-trailheads-scores
+    (is (= 13 (find-distinct-route-trailheads-scores
                ["..90..9"
                 "...1.98"
                 "...2..7"
@@ -46,7 +46,7 @@
 
 (deftest should-find-trailheads-with-distinct-route-in-example-3
   (testing "Should find trailheads with distinct route in example 3"
-    (is (= 227 (find-trailheads-scores
+    (is (= 227 (find-distinct-route-trailheads-scores
                 ["012345"
                  "123456"
                  "234567"
@@ -56,7 +56,7 @@
 
 (deftest should-find-trailheads-with-distinct-route-in-example-4
   (testing "Should find trailheads with distinct route in example 4"
-    (is (= 81 (find-trailheads-scores
+    (is (= 81 (find-distinct-route-trailheads-scores
                ["89010123"
                 "78121874"
                 "87430965"
@@ -66,6 +66,6 @@
                 "01329801"
                 "10456732"])))))
 
-(deftest should-find-trailheads-in-input-file
+(deftest should-find-trailheads-with-distinct-route-in-input-file
   (testing "Should find trailheads in input file"
-    (is (= 1960 (find-trailheads-scores (str/split-lines (slurp data-file)))))))
+    (is (= 1960 (find-distinct-route-trailheads-scores (str/split-lines (slurp data-file)))))))
