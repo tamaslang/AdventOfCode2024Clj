@@ -1,6 +1,6 @@
-(ns com.day11.Task-test
+(ns com.day11.Stones-test
   (:require [clojure.test :refer :all]
-            [com.day11.Task :refer :all]
+            [com.day11.Stones :refer :all]
             [clojure.string :as str]
             [clojure.java.io :as io]))
 
@@ -9,8 +9,12 @@
 
 (deftest should-solve-in-example
   (testing "Should solve"
-    (is (= 0 (solve ["3   4"])))))
+    (is (= 22 (blink 6 "125 17")))))
+
+(deftest should-solve-in-example
+  (testing "Should solve"
+    (is (= 55312 (blink 25 "125 17")))))
 
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
-    (is (= 0 (solve (str/split-lines (slurp data-file)))))))
+    (is (= 199946 (blink 25 (slurp data-file))))))
