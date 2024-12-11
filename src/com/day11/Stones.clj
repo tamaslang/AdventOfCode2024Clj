@@ -27,7 +27,7 @@
          (reduce + (map #(count-mapped-stone-memo % (dec remaining-blinks)) (mapcat apply-rule stones))))))))
 
 (defn recur-blink [stones blink]
-  (reduce + (map #(count-mapped-stone-memo % blink) stones)))
+  (reduce + (pmap #(count-mapped-stone-memo % blink) stones)))
 
 (defn blink
   "should find solution"
