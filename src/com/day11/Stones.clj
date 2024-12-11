@@ -33,3 +33,36 @@
   "should find solution"
   [blink stones]
   (recur-blink (parse-numbers-in-line stones) blink))
+
+(defn group-with-count [stones]
+  (map (fn [[id, elements]] {:id id :count (count elements)}) (group-by identity stones)))
+
+; OPTIMISED TASK 2 - DIFFERENT APPROACH / NO MEMOIZE
+(defn apply-rule-with-count [stone count]
+  (cond
+    (= stone 0) {:id 1 :count count}
+    (even? (count-digits stone))  (map (fn [mapped] {:id mapped :count count}) (split-nr-at-digit stone (/ (count-digits stone) 2)))
+    :else {:id (* 2024 stone) :count count}))
+
+(defn group-by-id-merge-counts [groups]
+  (map
+   (fn [[grp-key values]]
+     {:id grp-key
+      :count (reduce + (map :count values))}) (group-by :id groups)); '({:id 1, :count 2} {:id 2, :count 1} {:id 3, :count 1} {:id 4, :count 1} {:id 5, :count 3} {:id 5, :count 3}))
+  )
+
+(defn loop-with-counting-and-merging [stones blinks]
+  (loop
+   [stones (group-with-count stones)
+    remaining-blinks blinks]
+    (if (zero? remaining-blinks)
+      (reduce + (map :count stones))
+      (let
+       [mapped-stones (flatten (map (fn [stone] (apply-rule-with-count (:id stone) (:count stone))) stones))
+        groupped (group-by-id-merge-counts mapped-stones)]
+        (recur groupped (dec remaining-blinks))))))
+
+(defn blink-optimised
+  "should find solution without memoize"
+  [blink stones]
+  (loop-with-counting-and-merging (parse-numbers-in-line stones) blink))
