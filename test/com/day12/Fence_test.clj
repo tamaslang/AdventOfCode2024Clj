@@ -82,7 +82,6 @@
                                     "AAAADADA"
                                     "AAAAAAAA"])))))
 
-
 (deftest should-find-bulk-price-for-input-file
   (testing "Should find bulk price for input file"
     (is (= 862486 (fencing-price-bulk (str/split-lines (slurp data-file)))))))
