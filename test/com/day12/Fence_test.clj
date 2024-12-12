@@ -72,6 +72,17 @@
                                     "ABBAAA"
                                     "AAAAAA"])))))
 
+(deftest should-find-bulk-price-for-example-5
+  (testing "Should find bulk price for example 5"
+    (is (= 946 (fencing-price-bulk ["AAAAAAAA"
+                                    "AACBBDDA"
+                                    "AACBBAAA"
+                                    "ABBAAAAA"
+                                    "ABBADDDA"
+                                    "AAAADADA"
+                                    "AAAAAAAA"])))))
+
+
 (deftest should-find-bulk-price-for-input-file
   (testing "Should find bulk price for input file"
     (is (= 862486 (fencing-price-bulk (str/split-lines (slurp data-file)))))))

@@ -38,7 +38,7 @@
             [all-locations []]
             (range (* (count matrix) (count matrix))))))
 
-(defn calculate-fence-needed [matrix plot-id plot-area]
+(defn count-perimeters [matrix plot-id plot-area]
   (->>
    plot-area
    (map (fn [position] (- 4 (count (filter #(= (first %) plot-id) (adjacents matrix position))))))
@@ -49,15 +49,15 @@
   [data]
   (let [garden (create-matrix data)
         plots (find-all-plots garden)
-        plots-mapped-size (map (fn [plot] {:id (:id plot) :area-size (count (:area plot)) :fence-needed (calculate-fence-needed garden (:id plot) (:area plot))}) plots)]
+        plots-mapped-size (map (fn [plot] {:id (:id plot) :area-size (count (:area plot)) :perimeters (count-perimeters garden (:id plot) (:area plot))}) plots)]
     (->>
      plots-mapped-size
-     (map (fn [plot] (* (:area-size plot) (:fence-needed plot))))
+     (map (fn [plot] (* (:area-size plot) (:perimeters plot))))
      (reduce +))))
 
 ; TASK 2
 (defn count-corners-at-pos [matrix id [x y]]
-  (reduce + [; ┌ ( Upper left corner )
+  (reduce + [; ┌ (Upper left corner)
              (if (and
                   (not= id (matrix->get-xy matrix [x (dec y)]))
                   (not= id (matrix->get-xy matrix [(dec x) y]))) 1 0)
@@ -65,7 +65,7 @@
              (if (and
                   (not= id (matrix->get-xy matrix [x (dec y)]))
                   (not= id (matrix->get-xy matrix [(inc x) y]))) 1 0)
-   ; ┘ ( Lower right corner)
+   ; ┘ (Lower right corner)
              (if (and
                   (not= id (matrix->get-xy matrix [(inc x) y]))
                   (not= id (matrix->get-xy matrix [x (inc y)]))) 1 0)
@@ -75,7 +75,7 @@
                   (not= id (matrix->get-xy matrix [x (inc y)]))
                   (not= id (matrix->get-xy matrix [(dec x) y]))) 1 0)
 
-  ; ┌ ( Upper left corner INSIDE)
+  ; ┌ (Upper left corner INSIDE)
              (if (and
                   (= id (matrix->get-xy matrix [x (inc y)]))
                   (= id (matrix->get-xy matrix [(inc x) y]))
@@ -85,7 +85,7 @@
                   (= id (matrix->get-xy matrix [(dec x) y]))
                   (= id (matrix->get-xy matrix [x (inc y)]))
                   (not= id (matrix->get-xy matrix [(dec x) (inc y)]))) 1 0)
-  ; ┘ ( Lower right corner INSIDE)
+  ; ┘ (Lower right corner INSIDE)
              (if (and
                   (= id (matrix->get-xy matrix [x (dec y)]))
                   (= id (matrix->get-xy matrix [(dec x) y]))
@@ -96,7 +96,7 @@
                   (= id (matrix->get-xy matrix [(inc x) y]))
                   (not= id (matrix->get-xy matrix [(inc x) (dec y)]))) 1 0)]))
 
-(defn count-all-corners-for-areas [matrix id areas]
+(defn count-sides [matrix id areas]
   (->>
    areas
    (map #(count-corners-at-pos matrix id %))
@@ -107,8 +107,8 @@
   [data]
   (let [garden (create-matrix data)
         plots (find-all-plots garden)
-        plots-mapped-size (map (fn [plot] {:id (:id plot) :area-size (count (:area plot)) :fence-needed (count-all-corners-for-areas garden (:id plot) (:area plot))}) plots)]
+        plots-mapped-size (map (fn [plot] {:id (:id plot) :area-size (count (:area plot)) :sides (count-sides garden (:id plot) (:area plot))}) plots)]
     (->>
      plots-mapped-size
-     (map (fn [plot] (* (:area-size plot) (:fence-needed plot))))
+     (map (fn [plot] (* (:area-size plot) (:sides plot))))
      (reduce +))))
