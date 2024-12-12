@@ -29,6 +29,11 @@
         [j key] (map-indexed vector row)]
     {:symbol key :x j :y i}))
 
+(defn matrix->all-locations [matrix]
+  (set (for [[i row] (map-indexed vector matrix)
+             [j key] (map-indexed vector row)]
+         [j i])))
+
 (defn matrix->get-xy [matrix [x y]]
   (get-in matrix [y x]))
 
