@@ -9,7 +9,7 @@
 
 (deftest should-find-cheapest-price-to-win-all-prize-for-the-example
   (testing "Should find cheapest price to win all prize for the example"
-    (is (= 480 (find-prize-cheapest
+    (is (= 480 (find-all-prize-cheapest-brute-force
                 ["Button A: X+94, Y+34"
                  "Button B: X+22, Y+67"
                  "Prize: X=8400, Y=5400"
@@ -28,4 +28,27 @@
 
 (deftest should-find-cheapest-price-to-win-all-prize-for-the-input-file
   (testing "Should find cheapest price to win all prize for the input file"
-    (is (= 28059 (find-prize-cheapest (str/split-lines (slurp data-file)))))))
+    (is (= 28059 (find-all-prize-cheapest-brute-force (str/split-lines (slurp data-file)))))))
+
+(deftest should-find-cheapest-price-to-win-all-prize-for-the-example-task2
+  (testing "Should find cheapest price to win all prize for the example task2"
+    (is (= 875318608908 (find-prize-cheapest-task2
+                         ["Button A: X+94, Y+34"
+                          "Button B: X+22, Y+67"
+                          "Prize: X=8400, Y=5400"
+                          ""
+                          "Button A: X+26, Y+66"
+                          "Button B: X+67, Y+21"
+                          "Prize: X=12748, Y=12176"
+                          ""
+                          "Button A: X+17, Y+86"
+                          "Button B: X+84, Y+37"
+                          "Prize: X=7870, Y=6450"
+                          ""
+                          "Button A: X+69, Y+23"
+                          "Button B: X+27, Y+71"
+                          "Prize: X=18641, Y=10279"])))))
+
+(deftest should-find-cheapest-price-to-win-all-prize-for-the-input-file-task2
+  (testing "Should find cheapest price to win all prize for the input file task2"
+    (is (= 875318608908 (find-prize-cheapest-task2 (str/split-lines (slurp data-file)))))))
