@@ -14,8 +14,7 @@
     (reduce (fn [cheapest, count]
               (let
                [[a b] [(mod count max-a) (int (Math/floor (/ count max-a)))]]
-                (if (and (can-win-prize? a b [ax ay] [bx by] [x y]) (or (zero? cheapest) (< (tokens a b) cheapest))) (tokens a b) cheapest)))
-
+                (if (and (can-win-prize? a b [ax ay] [bx by] [x y]) (or (zero? cheapest) (< (tokens a b) cheapest))) (reduced (tokens a b)) cheapest)))
             (range 0 (* (inc max-a) (inc max-b))))))
 
 (defn parse-machine-configuration [machine-config]
