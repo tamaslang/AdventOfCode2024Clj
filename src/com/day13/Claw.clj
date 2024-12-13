@@ -38,6 +38,8 @@
 (defn add-task2-delta [[[ax ay] [bx by] [tx ty]]]
   [[ax ay] [bx by] [(+ tx 10000000000000) (+ ty 10000000000000)]])
 
+; VERIFIED with chat gpt: https://chatgpt.com/c/675c1563-89f0-800b-9625-3a7376610d51
+
 ; Button A: X+94, Y+34
 ; Button B: X+22, Y+67
 ; Prize: X=8400, Y=5400
