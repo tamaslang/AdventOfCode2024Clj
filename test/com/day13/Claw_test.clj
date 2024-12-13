@@ -51,4 +51,4 @@
 
 (deftest should-find-cheapest-price-to-win-all-prize-for-the-input-file-task2
   (testing "Should find cheapest price to win all prize for the input file task2"
-    (is (= 875318608908 (find-prize-cheapest-task2 (str/split-lines (slurp data-file)))))))
+    (is (= 102255878088512 (find-prize-cheapest-task2 (str/split-lines (slurp data-file)))))))
