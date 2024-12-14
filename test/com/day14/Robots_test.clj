@@ -28,11 +28,11 @@
 
 (deftest should-find-christmas-tree-for-input-file
   (testing "Should find christmas tree in input file"
-    (is (= 0 (find-christmas-tree 280000 40000000 [101 103] (str/split-lines (slurp data-file)))))))
+    (is (= 0 (find-christmas-tree 0 Integer/MAX_VALUE [101 103] (str/split-lines (slurp data-file)))))))
 
 (deftest should-find-christmas-tree-in-example
   (testing "Should find christmas tree in example"
-    (is (= 0 (find-christmas-tree 0 100 [11 7] ["p=0,4 v=3,-3"
+    (is (= 73 (find-christmas-tree 0 1000000 [11 7] ["p=0,4 v=3,-3"
                                                 "p=6,3 v=-1,-3"
                                                 "p=10,3 v=-1,2"
                                                 "p=2,0 v=2,-1"
@@ -47,4 +47,5 @@
 ; not found at = 6000000
 ; not found at = 6670000
 ;not found at = 7000000
-; less than 10000000 ?
+; not found at = 8300000
+; less than 40000000 ?
