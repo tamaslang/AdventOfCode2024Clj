@@ -23,16 +23,20 @@
 (defn find-horizontally-symmetric [quadrant-a quadrant-b X]
   (filter (fn [[x y]] (not-empty (set/intersection #{[(- X 1 x) y]} quadrant-b))) quadrant-a))
 
-(defn beginning-to-look-like-christmas? [robot-positions [X Y]]
+(defn beginning-to-look-like-christmas-initial-idea? [robot-positions [X Y]]
+  "First idea to look for a christmas tree in the middle position using symmetry"
   (let [half-x-dimension (int (/ X 2))
         left-half-bots (set (filter (fn [[px py]] (and (< px half-x-dimension) (< py 10))) robot-positions))]
     (> (count (find-horizontally-symmetric left-half-bots (set robot-positions) X)) (/ (count left-half-bots) 2))))
 
-(defn beginning-to-look-like-christmas-hack? [robot-positions [X Y]]
-  ; HACK probably due to the testdata creation all robot has unique position!!!
+(defn beginning-to-look-like-christmas-hack?
+  "HACK probably due to the testdata creation all robot has unique position!!!"
+  [robot-positions [X Y]]
   (= (count robot-positions) (count (set robot-positions))))
 
-(defn beginning-to-look-like-christmas-final? [robot-positions [X Y]]
+(defn beginning-to-look-like-christmas-final?
+  "look for a Christmas tree with finding adjacent robot positions"
+  [robot-positions [X Y]]
   (< 10 (count (filter #(< 10 %) (map (fn [[grp-key values]] (count values)) (group-by first robot-positions))))))
 
 (defn print-tree [coordinates [X Y]]
