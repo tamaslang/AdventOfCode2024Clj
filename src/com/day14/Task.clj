@@ -27,6 +27,18 @@
 (defn is-symmetric-horizontally? [robot-positions X]
   (every? (fn[[x y]] (not-empty (set/intersection #{[(- X 1 x) y]} robot-positions))) robot-positions)
 )
+;(let [
+;      threshold 10]
+;  (every? (fn [[x y]] (contains? robot-positions [(- X 1 x) y])) (take threshold robot-positions))
+;  )
+
+(defn find-symmetric [quadrant-a quadrant-b [X Y]]
+  (filter (fn[[x y]] (not-empty (set/intersection #{[(- X 1 x) y]} quadrant-b))) quadrant-a)
+)
+
+(defn is-symmetric-v2? [quadrant-a quadrant-b [X Y]]
+  (> (count (find-symmetric quadrant-a quadrant-b [X Y])) (/ (count quadrant-a) 2))
+)
 
 (defn is-christmas-tree? [robot-positions [X Y]]
   (let [quadrant-size-x (int (/ X 2))
@@ -39,7 +51,7 @@
     (and
      ;(= (count quadrant-1-bots) (count quadrant-2-bots))
      ;(= (count quadrant-3-bots) (count quadrant-4-bots))
-     (is-symmetric? (set quadrant-1-bots) (set quadrant-2-bots) [X Y])
+     (is-symmetric-v2? (set quadrant-1-bots) (set quadrant-2-bots) [X Y])
      ;(is-symmetric? (set quadrant-3-bots) (set quadrant-4-bots) [X Y])
      )))
 
@@ -53,7 +65,7 @@
               )
             )
           []
-          (range 0 (inc (* X Y))))
+          (range 0  (* X Y)))
   )
 
 (defn solve-for-christmas-tree [from-seconds max-seconds [X Y] data]
@@ -61,14 +73,14 @@
     (reduce (fn [_, second]
               (let
                [robots-moved (map #(move-robot-for-seconds second % [X Y]) robots)
-                is-christmas-tree? (is-symmetric-horizontally? (set robots-moved) X)
+                christmas-tree? (is-christmas-tree? robots-moved [X Y])
                 quadrant-size-x (int (/ X 2))
                 quadrant-size-y (int (/ Y 2))
                 ]
                 (when (zero? (mod second 10000)) (println "not found at =" second))
-                (when is-christmas-tree? (println "FOUND AT SECONDS=" second) )
-                (when is-christmas-tree? (print-tree (set robots-moved) [quadrant-size-x quadrant-size-y]))
-                (if is-christmas-tree? (reduced second) 0)))
+                (when christmas-tree? (println "FOUND AT SECONDS=" second) )
+                (when christmas-tree? (print-tree (set robots-moved) [quadrant-size-x quadrant-size-y]))
+                (if christmas-tree? (reduced second) 0)))
             0
             (range from-seconds max-seconds))))
 

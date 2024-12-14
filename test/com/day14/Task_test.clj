@@ -32,4 +32,5 @@
 
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
-    (is (= 0 (solve-for-christmas-tree 2570000 Integer/MAX_VALUE [101 103] (str/split-lines (slurp data-file)))))))
+    (is (= 0 (solve-for-christmas-tree 280000 40000000 [101 103] (str/split-lines (slurp data-file)))))))
+; not found at = 6000000
