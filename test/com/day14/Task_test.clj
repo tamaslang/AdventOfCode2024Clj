@@ -29,3 +29,7 @@
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
     (is (= 210587128 (solve 100 [101 103] (str/split-lines (slurp data-file)))))))
+
+(deftest should-solve-for-input-file
+  (testing "Should solve for input file"
+    (is (= 0 (solve-for-christmas-tree 2570000 Integer/MAX_VALUE [101 103] (str/split-lines (slurp data-file)))))))
