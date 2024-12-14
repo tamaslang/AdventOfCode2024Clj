@@ -20,19 +20,20 @@
         quadrant-4-bots (filter (fn [[px py]] (and (<  px quadrant-size-x) (<  quadrant-size-y py))) robot-position-after-seconds)]
     (reduce * (map count [quadrant-1-bots quadrant-2-bots quadrant-3-bots quadrant-4-bots]))))
 
-(defn find-symmetric [quadrant-a quadrant-b [X Y]]
+(defn find-horizontally-symmetric [quadrant-a quadrant-b X]
   (filter (fn [[x y]] (not-empty (set/intersection #{[(- X 1 x) y]} quadrant-b))) quadrant-a))
-
-(defn find-points-with-symmetry [area-to-check reference-area [X Y]]
-   (find-symmetric area-to-check reference-area [X Y]))
 
 (defn beginning-to-look-like-christmas? [robot-positions [X Y]]
   (let [half-x-dimension (int (/ X 2))
-        left-half-bots (set (filter (fn [[px py]] (and (< px half-x-dimension) (< py Y))) robot-positions))
-        ]
-     (> (count (find-points-with-symmetry left-half-bots (set robot-positions) [X Y])) (/ (count left-half-bots) 2))
-     )
-  )
+        left-half-bots (set (filter (fn [[px py]] (and (< px half-x-dimension) (< py 10))) robot-positions))]
+    (> (count (find-horizontally-symmetric left-half-bots (set robot-positions) X)) (/ (count left-half-bots) 2))))
+
+(defn beginning-to-look-like-christmas-hack? [robot-positions [X Y]]
+  ; HACK probably due to the testdata creation all robot has unique position!!!
+  (= (count robot-positions) (count (set robot-positions))))
+
+(defn beginning-to-look-like-christmas-final? [robot-positions [X Y]]
+  (< 10 (count (filter #(< 10 %) (map (fn [[grp-key values]] (count values)) (group-by first robot-positions))))))
 
 (defn print-tree [coordinates [X Y]]
   (reduce (fn [_, count]
@@ -49,13 +50,10 @@
     (reduce (fn [_, second]
               (let
                [robots-moved (map #(move-robot-for-seconds second % [X Y]) robots)
-                christmas-tree? (beginning-to-look-like-christmas? robots-moved [X Y])]
+                christmas-tree? (beginning-to-look-like-christmas-hack? robots-moved [X Y])]
                 (when (zero? (mod second 10000)) (println "not found at =" second))
                 (when christmas-tree? (println "FOUND AT SECONDS=" second))
                 (when christmas-tree? (print-tree (set robots-moved) [X Y]))
                 (if christmas-tree? (reduced second) 0)))
             0
             (range from-seconds to-seconds))))
-
-
-; have 500 robots [X Y] mutable
