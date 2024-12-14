@@ -35,22 +35,43 @@
   (= (count robot-positions) (count (set robot-positions))))
 
 (defn calculate-neighbour-score [distinct-robot-positions [X Y]]
-  (reduce (fn [[neightbour-score neighbouring-in-row], count]
+  (reduce (fn [[neighbour-score neighbouring-in-row], count]
             (let
              [[x y] [(mod count X) (int (Math/floor (/ count X)))]]
               (cond
-                (zero? x) [(+ neightbour-score neighbouring-in-row) 0]
-                (not (empty? (set/intersection distinct-robot-positions #{[x y]}))) [neightbour-score (* (inc neighbouring-in-row) 2)]
-                :else [(+ neightbour-score neighbouring-in-row) 0])))
-
+                (zero? x) [(+ neighbour-score neighbouring-in-row) 0]
+                (not (empty? (set/intersection distinct-robot-positions #{[x y]}))) [neighbour-score (* (inc neighbouring-in-row) 2)]
+                :else [(+ neighbour-score neighbouring-in-row) 0])))
           [0 0]
           (range 0 (* X Y))))
+
+(defn calculate-line-score [distinct-robot-positions-by-line line [from to]]
+  (let
+   [robots-x-positions-in-line (set (map first (distinct-robot-positions-by-line line)))]
+    (reduce + (reduce (fn [[neighbour-score neighbouring-in-row], x-pos]
+                        (cond
+                          (contains? robots-x-positions-in-line x-pos) [neighbour-score (* (inc neighbouring-in-row) 2)]
+                          :else [(+ neighbour-score neighbouring-in-row) 0]))
+                      [0 0]
+                      (range from to)))))
 
 (defn beginning-to-look-like-christmas?
   "look for a Christmas tree with finding adjacent robot positions"
   [robot-positions [X Y]]
   (let [[score _] (calculate-neighbour-score (set robot-positions) [X Y])]
       ;(println "SCORE= " score)
+    (> score 10000)))
+
+(defn beginning-to-look-like-christmas-optimised?
+  "look for a Christmas tree with finding adjacent robot positions"
+  [robot-positions [X Y]]
+  (let [distinct-robot-positions-by-line (group-by second robot-positions)
+        score (+
+               (calculate-line-score distinct-robot-positions-by-line 20 [20 80])
+               (calculate-line-score distinct-robot-positions-by-line 40 [20 80])
+               (calculate-line-score distinct-robot-positions-by-line 60 [20 80])
+               (calculate-line-score distinct-robot-positions-by-line 80 [20 80]))]
+;(println "SCORE= " score)
     (> score 10000)))
 
 (defn print-tree [coordinates [X Y]]
@@ -68,8 +89,8 @@
     (reduce (fn [_, second]
               (let
                [robots-moved (map #(move-robot-for-seconds second % [X Y]) robots)
-                christmas-tree? (beginning-to-look-like-christmas? robots-moved [X Y])]
-                (when (zero? (mod second 100)) (println "not found at =" second))
+                christmas-tree? (beginning-to-look-like-christmas-optimised? robots-moved [X Y])]
+                (when (zero? (mod second 1000)) (println "not found at =" second))
                 (when christmas-tree? (println "FOUND AT SECONDS=" second))
                 (when christmas-tree? (print-tree (set robots-moved) [X Y]))
                 (if christmas-tree? (reduced second) 0)))
