@@ -28,4 +28,4 @@
 
 (deftest should-find-christmas-tree-for-input-file
   (testing "Should find christmas tree in input file"
-    (is (= 7286 (find-christmas-tree 0 10000 [101 103] (str/split-lines (slurp data-file)))))))
+    (is (= 7286 (find-christmas-tree 7200 10000 [101 103] (str/split-lines (slurp data-file)))))))

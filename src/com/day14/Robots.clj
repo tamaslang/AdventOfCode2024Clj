@@ -34,10 +34,24 @@
   [robot-positions [X Y]]
   (= (count robot-positions) (count (set robot-positions))))
 
-(defn beginning-to-look-like-christmas-final?
+(defn calculate-neighbour-score [distinct-robot-positions [X Y]]
+  (reduce (fn [[neightbour-score neighbouring-in-row], count]
+            (let
+             [[x y] [(mod count X) (int (Math/floor (/ count X)))]]
+              (cond
+                (zero? x) [(+ neightbour-score neighbouring-in-row) 0]
+                (not (empty? (set/intersection distinct-robot-positions #{[x y]}))) [neightbour-score (* (inc neighbouring-in-row) 2)]
+                :else [(+ neightbour-score neighbouring-in-row) 0])))
+
+          [0 0]
+          (range 0 (* X Y))))
+
+(defn beginning-to-look-like-christmas?
   "look for a Christmas tree with finding adjacent robot positions"
   [robot-positions [X Y]]
-  (< 10 (count (filter #(< 10 %) (map (fn [[grp-key values]] (count values)) (group-by first robot-positions))))))
+  (let [[score _] (calculate-neighbour-score (set robot-positions) [X Y])]
+      ;(println "SCORE= " score)
+    (> score 10000)))
 
 (defn print-tree [coordinates [X Y]]
   (reduce (fn [_, count]
@@ -54,8 +68,8 @@
     (reduce (fn [_, second]
               (let
                [robots-moved (map #(move-robot-for-seconds second % [X Y]) robots)
-                christmas-tree? (beginning-to-look-like-christmas-hack? robots-moved [X Y])]
-                (when (zero? (mod second 10000)) (println "not found at =" second))
+                christmas-tree? (beginning-to-look-like-christmas? robots-moved [X Y])]
+                (when (zero? (mod second 100)) (println "not found at =" second))
                 (when christmas-tree? (println "FOUND AT SECONDS=" second))
                 (when christmas-tree? (print-tree (set robots-moved) [X Y]))
                 (if christmas-tree? (reduced second) 0)))
