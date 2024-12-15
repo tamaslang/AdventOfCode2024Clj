@@ -20,9 +20,9 @@
     (println "Unrecoginised instruction:" instruction)))
 
 (defn parse-input [input-lines]
-  (let [[matrix-part _ [instructions-part]] (partition-by str/blank? input-lines)
+  (let [[matrix-part _ instructions-part] (partition-by str/blank? input-lines)
         matrix (create-matrix matrix-part)]
-    [matrix instructions-part]))
+    [matrix (apply str instructions-part)]))
 
 (defn wall? [char] (= char \#))
 (defn box? [char] (= char \O))
