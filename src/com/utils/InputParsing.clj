@@ -49,7 +49,7 @@
     size-x (count (first matrix))]
     (reduce (fn [_, count]
               (let
-               [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]]
+               [pos [(mod count size-x) (int (Math/floor (/ count size-x)))]]
                 (if (= (matrix->get-xy matrix pos) char) (reduced pos) ())))
             0
             (range 0 (* size-x size-y)))))
@@ -60,7 +60,7 @@
     size-x (count (first matrix))]
     (reduce (fn [found, count]
               (let
-               [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]]
+               [pos [(mod count size-x) (int (Math/floor (/ count size-x)))]]
                 (if (= (matrix->get-xy matrix pos) char) (conj found pos) found)))
             #{}
             (range 0 (* size-x size-y)))))
@@ -71,7 +71,7 @@
     size-x (count (first matrix))]
     (reduce (fn [found, count]
               (let
-               [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]
+               [pos [(mod count size-x) (int (Math/floor (/ count size-x)))]
                 char-at-pos (matrix->get-xy matrix pos)]
                 (if (char-matching? char-at-pos) (conj found [char-at-pos pos]) found)))
             #{}
@@ -83,7 +83,7 @@
     size-x (count (first matrix))]
     (reduce (fn [found, count]
               (let
-               [pos [(mod count size-x) (int (Math/floor (/ count size-y)))]
+               [pos [(mod count size-x) (int (Math/floor (/ count size-x)))]
                 char-at-pos (matrix->get-xy matrix pos)]
                 (if (char-matching? char-at-pos) (conj found [(Integer/parseInt (str char-at-pos)) pos]) found)))
             #{}
