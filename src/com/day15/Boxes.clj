@@ -150,6 +150,23 @@
           #{}
           (cycle (list direction))))
 
+(defn attempt-to-move-optimised? [matrix boxes walls pos direction]
+  (reduce (fn [moved-boxes instruction]
+            (let [all-position (set/union #{pos} (all-positions-for-boxes moved-boxes))
+                  move-positions (set (map (fn [position] (move position instruction)) all-position))
+                  moved-boxes* (resolve-positions-boxes move-positions boxes)
+                  new-boxes (set/difference moved-boxes* moved-boxes)
+                  any-wall? (not-empty (set/intersection walls move-positions))]
+              ;(print-area-when-scaled-up boxes walls #{pos} [(count (first matrix)) (count matrix)])
+              ;(println)
+              (cond
+                any-wall? (reduced [false #{}])
+                (not-empty new-boxes) moved-boxes*
+                :else (reduced [true moved-boxes*]))))
+
+          #{}
+          (cycle (list direction))))
+
 (defn move-large-box [[box-left-pos box-right-pos] direction]
   [(move box-left-pos direction) (move box-right-pos direction)])
 
@@ -169,7 +186,6 @@
              untouched-boxes (set/difference boxes boxes-to-be-moved)
              moved-boxes (map (fn [box] (move-large-box box direction)) boxes-to-be-moved)
              boxes* (set/union untouched-boxes (set moved-boxes))]
-
          [current-pos* boxes*]))
      [start-pos (set boxes)]
      instructions)))

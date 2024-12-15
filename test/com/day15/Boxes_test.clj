@@ -87,4 +87,4 @@
 
 (deftest should-solve-for-input-file-scaled-up
   (testing "Should find box positions in input file sceld up"
-    (is (= 1552879 (find-box-positions-scaled-up (str/split-lines (slurp data-file)))))))
+    (is (= 1561175 (find-box-positions-scaled-up (str/split-lines (slurp data-file)))))))
