@@ -26,6 +26,7 @@
 
 (defn wall? [char] (= char \#))
 (defn box? [char] (= char \O))
+(defn space? [char] (= char \.))
 
 (defn move [[px py] [ix iy]]
   [(+ px ix) (+ py iy)])
@@ -126,40 +127,57 @@
             []
             (range 0  (* X Y)))))
 
+(defn resolve-positions-boxes [positions boxes]
+  (set (filter (fn [[[lx ly] [rx ry]]] (not-empty (set/intersection #{[lx ly] [rx ry]} positions))) boxes)))
+
+(defn all-positions-for-boxes [boxes]
+  (set (mapcat (fn [[box-left-pos box-right-pos]] [box-left-pos box-right-pos]) boxes)))
+
+(defn attempt-to-move? [matrix boxes walls pos direction]
+  (reduce (fn [moved-boxes instruction]
+            (let [all-position (set/union #{pos} (all-positions-for-boxes moved-boxes))
+                  move-positions (set (map (fn [position] (move position instruction)) all-position))
+                  moved-boxes* (resolve-positions-boxes move-positions boxes)
+                  new-boxes (set/difference moved-boxes* moved-boxes)
+                  any-wall? (not-empty (set/intersection walls move-positions))]
+              ;(print-area-when-scaled-up boxes walls #{pos} [(count (first matrix)) (count matrix)])
+              ;(println)
+              (cond
+                any-wall? (reduced [false #{}])
+                (not-empty new-boxes) moved-boxes*
+                :else (reduced [true moved-boxes*]))))
+
+          #{}
+          (cycle (list direction))))
+
+(defn move-large-box [[box-left-pos box-right-pos] direction]
+  [(move box-left-pos direction) (move box-right-pos direction)])
+
+(defn extend-left-position-to-full-box [[box-leftside-x box-leftside-y]]
+  [[box-leftside-x box-leftside-y] [(inc box-leftside-x) box-leftside-y]])
+
 (defn process-instructions-when-scaled-up [matrix instructions]
-  (println "MATRIX!")
-  (print-matrix matrix)
-  (let [boxes (map (fn [[box-leftside-x box-leftside-y]] [[box-leftside-x box-leftside-y] [(inc box-leftside-x) box-leftside-y]]) (matrix->find-all matrix \[))
+  (let [boxes (map extend-left-position-to-full-box (matrix->find-all matrix \[))
         walls (matrix->find-all matrix \#)
-        start-pos (matrix->find-first matrix \@)
-        size-y (count matrix)
-        size-x (count (first matrix))]
-    (println  "matrix size=" (count matrix))
-    (print-area-when-scaled-up boxes walls #{start-pos} [size-x size-y]))
-  ;
-  ;      start-pos (matrix->find-first matrix \@)]
-  ;  (reduce
-  ;    (fn
-  ;      [[current-pos boxes] instruction]
-  ;      ;(print-area boxes walls #{current-pos} [(count matrix) (count matrix)])
-  ;      ;(println)
-  ;      ;(println "instruction: " instruction)
-  ;      (let [direction (map-instuction-to-direction instruction)
-  ;            [can-move? boxes-on-the-way] (can-move? matrix boxes current-pos direction)
-  ;            current-pos* (if can-move? (move current-pos direction) current-pos)
-  ;            untouched-boxes (set/difference boxes boxes-on-the-way)
-  ;            moved-boxes (map (fn [box] (move box direction)) boxes-on-the-way)
-  ;            boxes* (set/union untouched-boxes (set moved-boxes))]
-  ;        [current-pos* boxes*]))
-  ;
-  ;    [start-pos boxes]
-  ;    instructions))
-  [[] #{}])
+        start-pos (matrix->find-first matrix \@)]
+    (reduce
+     (fn
+       [[current-pos boxes] instruction]
+       (let [direction (map-instuction-to-direction instruction)
+             [can-move? boxes-to-be-moved] (attempt-to-move? matrix boxes walls current-pos direction)
+             current-pos* (if can-move? (move current-pos direction) current-pos)
+             untouched-boxes (set/difference boxes boxes-to-be-moved)
+             moved-boxes (map (fn [box] (move-large-box box direction)) boxes-to-be-moved)
+             boxes* (set/union untouched-boxes (set moved-boxes))]
+
+         [current-pos* boxes*]))
+     [start-pos (set boxes)]
+     instructions)))
 
 (defn find-box-positions-scaled-up
   "should find box positions"
   [data]
   (let [[matrix instructions] (parse-input-with-scaling-up data)
         [_ moved-boxes] (process-instructions-when-scaled-up matrix instructions)]
-    (reduce + (map (fn [[x y]] (+ x (* y 100))) moved-boxes))))
+    (reduce + (map (fn [[[lx ly] [rx ry]]] (+ lx (* ly 100))) moved-boxes))))
 

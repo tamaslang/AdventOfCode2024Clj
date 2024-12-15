@@ -49,6 +49,17 @@
     (is (= 1552879 (find-box-positions (str/split-lines (slurp data-file)))))))
 
 ; TASK 2
+(deftest should-solve-in-small-example-scaled-up
+  (testing "Should find box positions in small example scaled up"
+    (is (= 618 (find-box-positions-scaled-up ["#######"
+                                              "#...#.#"
+                                              "#.....#"
+                                              "#..OO@#"
+                                              "#..O..#"
+                                              "#.....#"
+                                              "#######"
+                                              ""
+                                              "<vv<<^^<<^^"])))))
 
 (deftest should-solve-in-large-example-scaled-up
   (testing "Should find box positions in large example scaled up"
@@ -73,3 +84,7 @@
                                                "<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>"
                                                "^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>"
                                                "v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^"])))))
+
+(deftest should-solve-for-input-file-scaled-up
+  (testing "Should find box positions in input file sceld up"
+    (is (= 1552879 (find-box-positions-scaled-up (str/split-lines (slurp data-file)))))))
