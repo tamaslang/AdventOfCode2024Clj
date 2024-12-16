@@ -52,15 +52,15 @@
   (def visited-pos (atom {}))
   (reduce (fn [reindeers _]
             (if (empty? reindeers) (reduced @visited-pos)
-                                   (mapcat (fn [{:keys [pos direction score]}]
-                                             (let
-                                               [reached-end? (end? (matrix->get-xy matrix pos))]
+                (mapcat (fn [{:keys [pos direction score]}]
+                          (let
+                           [reached-end? (end? (matrix->get-xy matrix pos))]
                                                ; UPDATE VISITED
-                                               (when (not (was-visited-cheaper @visited-pos pos direction score)) (swap! visited-pos assoc [pos direction] score))
-                                               (cond
-                                                 reached-end? []
-                                                 (was-visited-cheaper @visited-pos pos direction score) []
-                                                 :else (all-positions-to-move-from-here matrix pos (go-forward direction) score)))) reindeers)))
+                            (when (not (was-visited-cheaper @visited-pos pos direction score)) (swap! visited-pos assoc [pos direction] score))
+                            (cond
+                              reached-end? []
+                              (was-visited-cheaper @visited-pos pos direction score) []
+                              :else (all-positions-to-move-from-here matrix pos (go-forward direction) score)))) reindeers)))
           [{:pos start-pos :direction [1 0] :score 0}] (range))
   (remove nil?
           [(@visited-pos [end-pos [0, -1]])

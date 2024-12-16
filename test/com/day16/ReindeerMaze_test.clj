@@ -35,5 +35,5 @@
 
 (deftest should-find-path-with-lowest-score-in-input-file
   (testing "Should find path with lowest score in input file"
-    (is (= 0 (find-path-with-lowest-score (str/split-lines (slurp data-file)))))))
+    (is (= 85396 (find-path-with-lowest-score (str/split-lines (slurp data-file)))))))
 
