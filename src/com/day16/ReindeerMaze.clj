@@ -88,7 +88,7 @@
 
                                             reindeers)))
                               [{:pos start-pos :direction [1 0] :score 0 :visited #{}}] (range))]
-    (count (apply set/union (map (fn [{:keys [pos direction score visited]}] visited) reindeers)))))
+    (count (apply set/union (map (fn [{:keys [_ visited]}] visited) reindeers)))))
 
 (defn find-tiles-for-seats
   "should find solution"
