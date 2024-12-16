@@ -9,31 +9,51 @@
 
 (deftest should-find=path-with-lowest-score-in-small-example
   (testing "Should find path with lowest score"
-    (is (= 1004 (find-path-with-lowest-score ["#####"
-                                              "#..E#"
-                                              "#.#.#"
-                                              "#S..#"
-                                              "#####"])))))
+    (is (= 1004 (find-path-with-lowest-score 7036 ["#####"
+                                                   "#..E#"
+                                                   "#.#.#"
+                                                   "#S..#"
+                                                   "#####"])))))
 
-(deftest should-find=path-with-lowest-score-in-example
+(deftest should-find=path-with-lowest-score-in-example-1
   (testing "Should find path with lowest score"
-    (is (= 7036 (find-path-with-lowest-score ["###############"
-                                              "#.......#....E#"
-                                              "#.#.###.#.###.#"
-                                              "#.....#.#...#.#"
-                                              "#.###.#####.#.#"
-                                              "#.#.#.......#.#"
-                                              "#.#.#####.###.#"
-                                              "#...........#.#"
-                                              "###.#.#####.#.#"
-                                              "#...#.....#.#.#"
-                                              "#.#.#.###.#.#.#"
-                                              "#.....#...#.#.#"
-                                              "#.###.#.#.#.#.#"
-                                              "#S..#.....#...#"
-                                              "###############"])))))
+    (is (= 7036 (find-path-with-lowest-score 7036 ["###############"
+                                                   "#.......#....E#"
+                                                   "#.#.###.#.###.#"
+                                                   "#.....#.#...#.#"
+                                                   "#.###.#####.#.#"
+                                                   "#.#.#.......#.#"
+                                                   "#.#.#####.###.#"
+                                                   "#...........#.#"
+                                                   "###.#.#####.#.#"
+                                                   "#...#.....#.#.#"
+                                                   "#.#.#.###.#.#.#"
+                                                   "#.....#...#.#.#"
+                                                   "#.###.#.#.#.#.#"
+                                                   "#S..#.....#...#"
+                                                   "###############"])))))
+
+(deftest should-find=path-with-lowest-score-in-example-2
+  (testing "Should find path with lowest score"
+    (is (= 11048 (find-path-with-lowest-score 12000 ["#################"
+                                                     "#...#...#...#..E#"
+                                                     "#.#.#.#.#.#.#.#.#"
+                                                     "#.#.#.#...#...#.#"
+                                                     "#.#.#.#.###.#.#.#"
+                                                     "#...#.#.#.....#.#"
+                                                     "#.#.#.#.#.#####.#"
+                                                     "#.#...#.#.#.....#"
+                                                     "#.#.#####.#.###.#"
+                                                     "#.#.#.......#...#"
+                                                     "#.#.###.#####.###"
+                                                     "#.#.#...#.....#.#"
+                                                     "#.#.#.#####.###.#"
+                                                     "#.#.#.........#.#"
+                                                     "#.#.#.#########.#"
+                                                     "#S#.............#"
+                                                     "#################"])))))
 
 (deftest should-find-path-with-lowest-score-in-input-file
   (testing "Should find path with lowest score in input file"
-    (is (= 85396 (find-path-with-lowest-score (str/split-lines (slurp data-file)))))))
+    (is (= 85396 (find-path-with-lowest-score 85396 (str/split-lines (slurp data-file)))))))
 

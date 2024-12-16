@@ -48,7 +48,10 @@
                 (field-if-can-move matrix pos (turn-left direction) (+ score 1001))
                 (field-if-can-move matrix pos (turn-right direction) (+ score 1001))]))
 
-(defn find-reindeer-path [matrix start-pos end-pos]
+(defn apply-upper-score-limit [upper-limit positions]
+  (filter (fn [{:keys [pos direction score]}] (<= score upper-limit)) positions))
+
+(defn find-reindeer-path [upper-limit matrix start-pos end-pos]
   (def visited-pos (atom {}))
   (reduce (fn [reindeers _]
             (if (empty? reindeers) (reduced @visited-pos)
@@ -60,7 +63,11 @@
                             (cond
                               reached-end? []
                               (was-visited-cheaper @visited-pos pos direction score) []
-                              :else (all-positions-to-move-from-here matrix pos (go-forward direction) score)))) reindeers)))
+                              :else
+                              (apply-upper-score-limit upper-limit
+                                                       (all-positions-to-move-from-here matrix pos (go-forward direction) score)))))
+
+                        reindeers)))
           [{:pos start-pos :direction [1 0] :score 0}] (range))
   (remove nil?
           [(@visited-pos [end-pos [0, -1]])
@@ -68,18 +75,10 @@
            (@visited-pos [end-pos [0 1]])
            (@visited-pos [end-pos [-1 0]])]))
 
-;
-;(reduce (fn [next-positions next-slope]
-;          (let
-;            [adjacents (mapcat #(matrix->adjacents matrix %) next-positions)
-;             next-positions (filter (fn [[height _]] (= height next-slope)) adjacents)]
-;            next-positions))
-;        [starting-position] "123456789"))
-
 (defn find-path-with-lowest-score
   "should find solution"
-  [data]
+  [upper-limit data]
   (let [matrix (create-matrix data)
         start-pos (matrix->find-first matrix \S)
         end-pos (matrix->find-first matrix \E)]
-    (apply min (find-reindeer-path matrix start-pos end-pos))))
+    (apply min (find-reindeer-path upper-limit matrix start-pos end-pos))))
