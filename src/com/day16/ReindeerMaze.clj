@@ -38,25 +38,6 @@
                 (field-if-can-move matrix pos (turn-left direction) (+ score 1001))
                 (field-if-can-move matrix pos (turn-right direction) (+ score 1001))]))
 
-(defn all-waypoints-reached-end? [end-pos waypoints]
-  (every? (fn [{:keys [pos]}] (= end-pos pos)) waypoints))
-
-; REDUCE
-(defn count-fields-best-path-reduce [visited-pos-state upper-limit matrix end-pos waypoint]
-  (first (reduce (fn [waypoints step-count]
-                   (if (all-waypoints-reached-end? end-pos waypoints) (reduced [waypoints step-count])
-                       (mapcat (fn [{:keys [pos direction score visited]}]
-                                 (when (not (was-visited-cheaper @visited-pos-state pos direction score)) (swap! visited-pos-state  assoc [pos direction] score))
-                                 (cond
-                                   (was-visited-cheaper @visited-pos-state pos direction score) []
-                                   :else
-                                   (->>
-                                    (all-positions-to-move-from-here matrix pos direction score)
-                                    (filter (fn [{:keys [score]}] (<= score upper-limit)))
-                                    (map #(assoc % :visited (conj visited pos (:pos %)))))))
-                               waypoints)))
-                 [waypoint] (range (* (count matrix) (count matrix))))))
-
 ; RECURSIVE
 (defn count-fields-best-path-recursive [visited-pos-state upper-limit matrix end-pos waypoint]
   (cond
@@ -76,7 +57,8 @@
 (defn count-lowest-score [upper-limit matrix start-pos end-pos]
   (def visited-pos (atom {}))
   (let [waypoint {:pos start-pos :direction (directions :EAST) :score 0 :visited #{start-pos}}
-        waypoints-reached-end (count-fields-best-path-reduce visited-pos upper-limit matrix end-pos waypoint)]
+        waypoints-reached-end (count-fields-best-path-recursive visited-pos upper-limit matrix end-pos waypoint)]
+    (println "END" waypoints-reached-end)
     (apply min (map #(:score %) waypoints-reached-end))))
 
 (defn find-path-with-lowest-score
@@ -91,7 +73,7 @@
 (defn count-fields-best-path [upper-limit matrix start-pos end-pos]
   (def visited-pos (atom {}))
   (let [waypoint {:pos start-pos :direction (directions :EAST) :score 0 :visited #{start-pos}}
-        waypoints-reached-end (count-fields-best-path-reduce visited-pos upper-limit matrix end-pos waypoint)
+        waypoints-reached-end (count-fields-best-path-recursive visited-pos upper-limit matrix end-pos waypoint)
         smallest-score (apply min (map #(:score %) waypoints-reached-end))
         waypoints-with-smallest-score (filter #(= (:score %) smallest-score) waypoints-reached-end)]
     (count (apply set/union (map (fn [{:keys [_ visited]}] visited) waypoints-with-smallest-score)))))
