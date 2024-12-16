@@ -3,16 +3,22 @@
             [com.utils.InputParsing :refer :all]))
 
 (def directions
-  [[0, -1]
-   [1 0]
-   [0 1]
-   [-1 0]])
+  { :NORTH [0, -1]
+    :EAST [1 0]
+   :SOUTH [0 1]
+   :WEST [-1 0]})
 
 (defn turn-right [direction]
-  (nth (cycle directions) (inc (.indexOf directions direction))))
+  (let [direction-vals (vals directions)]
+    (nth (cycle direction-vals) (inc (.indexOf direction-vals direction))))
+  )
 
 (defn turn-left [direction]
-  (nth directions (mod (+ (count directions) (dec (.indexOf directions direction))) (count directions))))
+  (let [direction-vals (vals directions)
+        direction-count (count directions)
+        ]
+    (nth direction-vals (mod (+ direction-count (dec (.indexOf direction-vals direction))) direction-count)))
+  )
 
 (defn go-forward [direction] direction)
 
