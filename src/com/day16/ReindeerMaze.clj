@@ -24,7 +24,6 @@
 
 (defn move [current-pos direction]
   [(+ (first current-pos) (first direction))
-  [(+ (first current-pos) (first direction))
    (+ (second current-pos) (second direction))])
 
 (defn field-if-can-move [matrix pos direction score]
@@ -39,6 +38,7 @@
                 (field-if-can-move matrix pos (turn-left direction) (+ score 1001))
                 (field-if-can-move matrix pos (turn-right direction) (+ score 1001))]))
 
+; RECURSIVE
 (defn count-fields-best-path-recursive [visited-pos-state upper-limit matrix end-pos waypoint]
   (cond
     (= (:pos waypoint) end-pos) waypoint
