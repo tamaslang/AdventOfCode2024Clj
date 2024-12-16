@@ -38,7 +38,6 @@
                 (field-if-can-move matrix pos (turn-left direction) (+ score 1001) visited)
                 (field-if-can-move matrix pos (turn-right direction) (+ score 1001) visited)]))
 
-
 (defn update-state [visited-pos-state waypoint]
   (swap! visited-pos-state assoc [(:pos waypoint) (:direction waypoint)] (:score waypoint))
   waypoint)
@@ -52,8 +51,7 @@
      [all-pos-from-here
       (->> (resolve-to-next-positions matrix (:pos waypoint) (:direction waypoint) (:score waypoint) (:visited waypoint))
            (filter (fn [{:keys [score]}] (<= score upper-limit)))
-           (map (fn [waypoint] (update-state visited-pos-state waypoint))))
-      ]
+           (map (fn [waypoint] (update-state visited-pos-state waypoint))))]
       (swap! visited-pos-state assoc [(:pos waypoint) (:direction waypoint)] (:score waypoint))
       (doall (remove nil? (flatten (map #(count-fields-best-path-recursive visited-pos-state upper-limit matrix end-pos %) all-pos-from-here)))))
     :else nil     ; there is cheaper, stop
