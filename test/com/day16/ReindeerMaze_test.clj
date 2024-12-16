@@ -55,7 +55,7 @@
 
 (deftest should-find-path-with-lowest-score-in-input-file
   (testing "Should find path with lowest score in input file"
-    (is (= 85396 (find-path-with-lowest-score 85396 (str/split-lines (slurp data-file)))))))
+    (is (= 85396 (find-path-with-lowest-score 100000 (str/split-lines (slurp data-file)))))))
 
 (deftest should-find-seats-in-small-example
   (testing "Should find seats in small example"
@@ -105,4 +105,4 @@
 
 (deftest should-find-seats-in-input-file
   (testing "Should find seats in input file"
-    (is (= 428 (find-tiles-for-seats 85396 (str/split-lines (slurp data-file)))))))
+    (is (= 428 (find-tiles-for-seats 100000 (str/split-lines (slurp data-file)))))))
