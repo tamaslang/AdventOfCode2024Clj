@@ -12,10 +12,10 @@
 ; (So, an operand of 2 would divide A by 4 (2^2); an operand of 5 would divide A by 2^B.)
 ; The result of the division operation is truncated to an integer and then written to the A register.
 (deftest should-perform-adv
-  (testing "Should perform adv, divide by 4"
+  (testing "Should perform adv"
     (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 4 :BX 0 :CX 0})))
-    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 6 :BX 2 :CX 0}))) ; handle non integers
-    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 5 {:AX 4 :BX 0 :CX 0}))) ; use BX for combo operand
+    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
+    (is (= {:output nil :registers{:AX 1 :BX 3 :CX 0}} (adv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
     )
 )
 
@@ -56,11 +56,22 @@
     )
   )
 
-;The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register.
-; (The numerator is still read from the A register.)
+;The numerator is the value in the A register.
+; The denominator is found by raising 2 to the power of the instruction's combo operand.
+; (So, an operand of 2 would divide A by 4 (2^2); an operand of 5 would divide A by 2^B.)
+; The result of the division operation is truncated to an integer and then written to the B register.
+(deftest should-perform-bdv
+  (testing "Should perform bdv"
+    (is (= {:output nil :registers{:AX 4 :BX 1 :CX 0}} (bdv 2 {:AX 4 :BX 0 :CX 0})))
+    (is (= {:output nil :registers{:AX 6 :BX 1 :CX 0}} (bdv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
+    (is (= {:output nil :registers{:AX 8 :BX 1 :CX 0}} (bdv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
+    )
+  )
 
 ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register.
 ; (The numerator is still read from the A register.)
+
+
 (deftest should-execute-program-in-example
   (testing "Should execute program in example"
     (is (= 0 (execute-program [

@@ -22,7 +22,7 @@
 (defn adv [operand {:keys [AX BX CX] :as registers}]
   (let [
         resolved-operand (resolve-combo-operand operand registers)
-        result (int (/ AX (Math/pow resolved-operand 2)))
+        result (int (/ AX (Math/pow 2 resolved-operand)))
         registers* (assoc registers :AX result)
         ]
     {:output nil :registers registers*}
@@ -63,6 +63,16 @@
         result (mod resolved-operand 8)
         ]
     {:output result :registers registers}
+    )
+  )
+
+(defn bdv [operand {:keys [AX BX CX] :as registers}]
+  (let [
+        resolved-operand (resolve-combo-operand operand registers)
+        result (int (/ AX (Math/pow 2 resolved-operand)))
+        registers* (assoc registers :BX result)
+        ]
+    {:output nil :registers registers*}
     )
   )
 
