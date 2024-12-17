@@ -85,6 +85,16 @@
     )
   )
 
+(deftest should-execute-samples
+  (testing "Should execute sample instructions"
+    (is (= {:output [] :registers {:AX 0 :BX 1 :CX 9}} (execute (parse-instructions "2,6" ) {:AX 0 :BX 0 :CX 9})))
+    (is (= {:output [0 1 2] :registers {:AX 10 :BX 0 :CX 0}} (execute (parse-instructions "5,0,5,1,5,4" ) {:AX 10 :BX 0 :CX 0})))
+    (is (= {:output [4 2 5 6 7 7 7 7 3 1 0] :registers {:AX 0 :BX 0 :CX 0}} (execute (parse-instructions "0,1,5,4,3,0" ) {:AX 2024 :BX 0 :CX 0})))
+    (is (= {:output [] :registers {:AX 0 :BX 26 :CX 0}} (execute (parse-instructions "1,7" ) {:AX 0 :BX 29 :CX 0})))
+    (is (= {:output [] :registers {:AX 0 :BX 44354 :CX 43690}} (execute (parse-instructions "4,0" ) {:AX 0 :BX 2024 :CX 43690})))
+    )
+  )
+
 (deftest should-execute-program-in-example
   (testing "Should execute program in example"
     (is (= 0 (execute-program [

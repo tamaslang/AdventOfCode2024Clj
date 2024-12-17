@@ -1,5 +1,8 @@
 (ns com.day17.Computer
-  (:require [com.utils.InputParsing :refer :all]))
+  (:require
+    [com.utils.InputParsing :refer :all]
+    [clojure.string :as str]
+            ))
 
 ;(defn compile-program [program]
 ;  (let [[registers _ instructions] (partition-by str/blank? program)
@@ -93,6 +96,47 @@
     {:output nil :registers registers*}
     )
   )
+
+(def operation-set
+  {
+   0 adv
+   1 bxl
+   2 bst
+   3 jnz
+   4 bxc
+   5 out
+   6 bdv
+   7 cdv
+   }
+  )
+
+(defn execute [instructions {:keys [AX BX CX] :as registers}]
+  (println "EXECUTE " instructions)
+  (println "REGISTERS " registers)
+  (loop
+    [instruction-ptr 0
+     registers registers
+     output []
+     ]
+
+    (let [
+          [opcode operand] (nth instructions instruction-ptr)
+          operation (operation-set opcode)
+          {jump-ptr :instruction-ptr output-value :output registers* :registers} (operation operand registers)
+          instruction-ptr* (if jump-ptr (/ jump-ptr 2) (inc instruction-ptr))
+          output* (if output-value (conj output output-value) output)
+          ]
+        (if (< instruction-ptr* (count instructions))
+          (recur instruction-ptr* registers* output*)
+          {:output output* :registers registers*}
+         )
+      )
+    )
+  )
+
+(defn parse-instructions [instruction-str]
+  (partition 2 2 (parse-numbers-in-line-separator #"," instruction-str))
+)
 
 (defn execute-program
   "should find solution"
