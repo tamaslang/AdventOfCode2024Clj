@@ -205,6 +205,5 @@
                 (cond
                   (= output expected-instructions) (reduced AX)
                   :else AX*)))
-
             start-AX
             (range))))
