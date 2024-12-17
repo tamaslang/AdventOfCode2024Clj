@@ -14,7 +14,7 @@
 
 (defn adv [operand {:keys [AX BX CX] :as registers}]
   (let [resolved-operand (resolve-combo-operand operand registers)
-        result (int (/ AX (Math/pow 2 resolved-operand)))
+        result (long (/ AX (Math/pow 2 resolved-operand)))
         registers* (assoc registers :AX result)]
     {:output nil :registers registers*}))
 
@@ -46,15 +46,54 @@
 
 (defn bdv [operand {:keys [AX BX CX] :as registers}]
   (let [resolved-operand (resolve-combo-operand operand registers)
-        result (int (/ AX (Math/pow 2 resolved-operand)))
+        result (long (/ AX (Math/pow 2 resolved-operand)))
         registers* (assoc registers :BX result)]
     {:output nil :registers registers*}))
 
 (defn cdv [operand {:keys [AX BX CX] :as registers}]
   (let [resolved-operand (resolve-combo-operand operand registers)
-        result (int (/ AX (Math/pow 2 resolved-operand)))
+        result (long (/ AX (Math/pow 2 resolved-operand)))
         registers* (assoc registers :CX result)]
     {:output nil :registers registers*}))
+
+(defn combined-ops [operand {:keys [AX BX CX] :as registers}]
+  (let [AX* (long (/ AX (Math/pow 2 3)))
+        BX* (bit-xor
+              (mod AX 8)
+              (long (/ AX (Math/pow 2 (- 7 (mod AX 8)))))
+              )
+        CX* (long (/ AX (Math/pow 2 (- 7 (mod AX 8)))))
+        output (mod BX* 8)
+        ]
+    (println "AX=" AX " BX=" BX " CX=" CX)
+    (println "AX*=" AX* " BX*=" BX* " CX*=" CX*)
+    (println "output " (mod BX* 8))
+    {:output output :registers {:AX AX* :BX BX* :CX CX*}}
+    )
+  )
+
+(defn combined-ops-v2 [AX]
+  (let [AX* (long (/ AX (Math/pow 2 3)))
+        BX* (bit-xor (mod AX 8) (long (/ AX (Math/pow 2 (- 7 (mod AX 8))))))
+        ]
+    {:output (mod BX* 8) :AX AX*}
+    )
+  )
+;
+;(let [AX 2037
+;      BX 5
+;      CX 254
+;      AX* (int (/ AX (Math/pow 2 3)))
+;      BX* (bit-xor
+;            (mod AX 8)
+;            (int (/ AX (Math/pow 2 (- 7 (mod AX 8)))))
+;            )
+;      CX* (int (/ AX (Math/pow 2 (- 7 (mod AX 8)))))
+;      ]
+;  (println "AX=" AX " BX=" BX " CX=" CX)
+;  (println "AX*=" AX* " BX*=" BX* " CX*=" CX*)
+;  (println "output " (mod BX* 8))
+;  )
 
 (def operation-set
   {0 ["ADV" adv]
@@ -66,30 +105,35 @@
    6 ["BDV" bdv]
    7 ["CDV" cdv]})
 
-(defn log-operation [operation-name opcode registers output]
-  (println (format "%3s %d      Registers: %-30s Output: %s" operation-name opcode registers output))
+(defn log-operation [operation-name operand registers output]
+  (println (format "%3s %d      Registers: %-30s Output: %s" operation-name operand registers output)))
+
+(defn log-program [instructions registers]
+  (println "EXECUTE PROGRAM")
+  (println  (format "Instructions: %s" (into [] instructions))))
+
+(defn can-be-valid-output? [expected-output output]
+  (= (take (count output) expected-output) output)
 )
 
-(defn log-program [registers]
-  (println "EXECUTE PROGRAM")
-  (println  (format "           Registers: %-30s" registers))
-  )
-
-(defn execute [logging instructions {:keys [AX BX CX] :as registers} ]
-  (when logging (log-program registers))
+(defn execute [logging instructions {:keys [AX BX CX] :as registers} is-valid-output?]
+  (when logging (log-program instructions registers))
   (loop
    [instruction-ptr 0
     registers registers
     output []]
-    (let [[opcode operand] (nth instructions instruction-ptr)
+      (let [[opcode operand] (nth instructions instruction-ptr)
           [operation-name operation] (operation-set opcode)
           {jump-ptr :instruction-ptr output-value :output registers* :registers} (operation operand registers)
           instruction-ptr* (if jump-ptr (/ jump-ptr 2) (inc instruction-ptr))
           output* (if output-value (conj output output-value) output)]
-      (when logging (log-operation operation-name opcode registers* output*))
-      (if (< instruction-ptr* (count instructions))
-        (recur instruction-ptr* registers* output*)
-        {:output output* :registers registers*}))))
+      (when logging (log-operation operation-name operand registers* output*))
+      (cond
+        (not (is-valid-output? output*)) {:output output* :registers registers*} ; terminate early
+        (< instruction-ptr* (count instructions)) (recur instruction-ptr* registers* output*)
+        :else
+          {:output output* :registers registers*}
+      ))))
 
 (defn parse-instructions [instruction-str]
   (partition 2 2 (parse-numbers-in-line-separator #"," instruction-str)))
@@ -111,17 +155,41 @@
   "should find solution"
   [data]
   (let [{:keys [instructions registers]} (compile-program data)
-        {output :output registers* :registers} (execute true instructions registers )]
+        {output :output registers* :registers} (execute true instructions registers (fn[output] true))]
     (str/join "," output)))
 
+(defn combined-ops [AX]
+  (let [AX* (long (/ AX (Math/pow 2 3)))
+        BX* (bit-xor (mod AX 8) (long (/ AX (Math/pow 2 (- 7 (mod AX 8))))))
+        ]
+    {:output (mod BX* 8) :AX AX*}
+    )
+  )
 ; PART 2 brute force
-(defn find-AX-register-value-for-program-to-output-itself-brute-force
+(defn execute-combined [START is-valid-output?]
+  (loop
+    [AX START
+     output []]
+    (let [{output-value :output AX* :AX} (combined-ops-v2 AX)
+          output* (conj output output-value)]
+      (cond
+        (not (is-valid-output? output*)) output* ; terminate early
+        (zero? AX*) output*
+        :else (recur AX* output*)
+        )))
+  )
+
+(defn find-AX-register-value-for-expected-n-instructions
   "should find solution"
-  [upper-limit data]
-  (let [{:keys [instructions registers]} (compile-program data)
-        expected-instructions  (flatten instructions)]
-    (reduce (fn [_ AX]
-              (let [{output :output} (execute false instructions (assoc registers :AX AX))]
-                (when (zero? (mod AX 100000)) (println "COUNT: " AX))
-                (when (= output expected-instructions) (reduced AX)))) 0 (range 0 upper-limit))))
+  [instruction-count data]
+  (let [{:keys [instructions _]} (compile-program data)
+        expected-instructions (take-last instruction-count (flatten instructions))
+        output-validator (partial can-be-valid-output? expected-instructions)
+        ]
+    (println (format "Finding AX for last %d instructions. Instructions=%s" instruction-count expected-instructions))
+             (reduce (fn [_ AX]
+                       (let [output (execute-combined AX output-validator)]
+                         (when (zero? (mod AX 100000)) (println "COUNT: " AX))
+                         (when (= output expected-instructions) (reduced AX)))) 0 (range)))
+  )
 

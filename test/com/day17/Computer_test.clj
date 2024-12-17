@@ -52,6 +52,8 @@
     (is (= {:output 3 :registers {:AX 0 :BX 0 :CX 0}} (out 3 {:AX 0 :BX 0 :CX 0})))
     (is (= {:output 7 :registers {:AX 255 :BX 0 :CX 0}} (out 4 {:AX 255 :BX 0 :CX 0}))) ; use register
     ))
+
+; (opcode 6)
 ;The numerator is the value in the A register.
 ; The denominator is found by raising 2 to the power of the instruction's combo operand.
 ; (So, an operand of 2 would divide A by 4 (2^2); an operand of 5 would divide A by 2^B.)
@@ -62,8 +64,12 @@
     (is (= {:output nil :registers {:AX 6 :BX 1 :CX 0}} (bdv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
     (is (= {:output nil :registers {:AX 8 :BX 1 :CX 0}} (bdv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
     ))
-; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register.
-; (The numerator is still read from the A register.)
+
+; (opcode 7)
+;The numerator is the value in the A register.
+; The denominator is found by raising 2 to the power of the instruction's combo operand.
+; (So, an operand of 2 would divide A by 4 (2^2); an operand of 5 would divide A by 2^B.)
+; The result of the division operation is truncated to an integer and then written to the C register.
 (deftest should-perform-cdv
   (testing "Should perform cdv"
     (is (= {:output nil :registers {:AX 4 :BX 0 :CX 1}} (cdv 2 {:AX 4 :BX 0 :CX 0})))
@@ -90,7 +96,17 @@
   (testing "Should execute program for input file"
     (is (= "2,0,4,2,7,0,1,0,3" (execute-program (str/split-lines (slurp data-file)))))))
 
+
+
 ; PART 2
+(deftest should-execute-program-on-input-file-modified-for-part2
+  (testing "Should execute program in example"
+                      (is (= "3 0" (execute-program ["Register A: 246852"
+                                                   "Register B: 0"
+                                                   "Register C: 0"
+                                                   ""
+                                                   "Program: 2,4,1,7,7,5,1,7,0,3,4,1,5,5,3,0"])))))
+
 ; prgram outputs itself
 (deftest should-execute-program-in-example-that-outputs-itself
   (is (= "0,3,5,4,3,0" (execute-program ["Register A: 117440"
@@ -99,16 +115,7 @@
                                          ""
                                          "Program: 0,3,5,4,3,0"]))))
 
-
-(deftest should-find-AX-for-program-that-output-itself-in-example
-  (testing "Should execute program in example"
-    (is (= 117440 (find-AX-register-value-for-program-to-output-itself-brute-force 120000 ["Register A: 117440"
-                                                                                           "Register B: 0"
-                                                                                           "Register C: 0"
-                                                                                           ""
-                                                                                           "Program: 0,3,5,4,3,0"])))))
-
-; until 20000000 not found
+; 2,4,1,7,7,5,1,7,0,3,4,1,5,5,3,0
 (deftest should-find-AX-for-program-that-output-itself-for-input-file
   (testing "Should execute program in example"
-    (is (= 117440 (find-AX-register-value-for-program-to-output-itself-brute-force Integer/MAX_VALUE (str/split-lines (slurp data-file)))))))
+    (is (= 246852 (find-AX-register-value-for-expected-n-instructions 6 (str/split-lines (slurp data-file)))))))
