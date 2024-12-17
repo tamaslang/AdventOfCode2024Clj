@@ -78,11 +78,11 @@
     ))
 (deftest should-execute-samples
   (testing "Should execute sample instructions"
-    (is (= {:output [] :registers {:AX 0 :BX 1 :CX 9}} (execute (parse-instructions "2,6") {:AX 0 :BX 0 :CX 9})))
-    (is (= {:output [0 1 2] :registers {:AX 10 :BX 0 :CX 0}} (execute (parse-instructions "5,0,5,1,5,4") {:AX 10 :BX 0 :CX 0})))
-    (is (= {:output [4 2 5 6 7 7 7 7 3 1 0] :registers {:AX 0 :BX 0 :CX 0}} (execute (parse-instructions "0,1,5,4,3,0") {:AX 2024 :BX 0 :CX 0})))
-    (is (= {:output [] :registers {:AX 0 :BX 26 :CX 0}} (execute (parse-instructions "1,7") {:AX 0 :BX 29 :CX 0})))
-    (is (= {:output [] :registers {:AX 0 :BX 44354 :CX 43690}} (execute (parse-instructions "4,0") {:AX 0 :BX 2024 :CX 43690})))))
+    (is (= {:output [] :registers {:AX 0 :BX 1 :CX 9}} (execute true (parse-instructions "2,6") {:AX 0 :BX 0 :CX 9})))
+    (is (= {:output [0 1 2] :registers {:AX 10 :BX 0 :CX 0}} (execute true (parse-instructions "5,0,5,1,5,4") {:AX 10 :BX 0 :CX 0})))
+    (is (= {:output [4 2 5 6 7 7 7 7 3 1 0] :registers {:AX 0 :BX 0 :CX 0}} (execute true (parse-instructions "0,1,5,4,3,0") {:AX 2024 :BX 0 :CX 0})))
+    (is (= {:output [] :registers {:AX 0 :BX 26 :CX 0}} (execute true (parse-instructions "1,7") {:AX 0 :BX 29 :CX 0})))
+    (is (= {:output [] :registers {:AX 0 :BX 44354 :CX 43690}} (execute true (parse-instructions "4,0") {:AX 0 :BX 2024 :CX 43690})))))
 
 (deftest should-execute-program-in-example
   (testing "Should execute program in example"
@@ -96,16 +96,14 @@
   (testing "Should execute program for input file"
     (is (= "2,0,4,2,7,0,1,0,3" (execute-program (str/split-lines (slurp data-file)))))))
 
-
-
 ; PART 2
-(deftest should-execute-program-on-input-file-modified-for-part2
+(deftest should-execute-program-on-input-file-modified-for-part2-to-generate-last-6-digits
   (testing "Should execute program in example"
-                      (is (= "3 0" (execute-program ["Register A: 246852"
-                                                   "Register B: 0"
-                                                   "Register C: 0"
-                                                   ""
-                                                   "Program: 2,4,1,7,7,5,1,7,0,3,4,1,5,5,3,0"])))))
+    (is (= "4,1,5,5,3,0" (execute-program ["Register A: 246852"
+                                           "Register B: 0"
+                                           "Register C: 0"
+                                           ""
+                                           "Program: 2,4,1,7,7,5,1,7,0,3,4,1,5,5,3,0"])))))
 
 ; prgram outputs itself
 (deftest should-execute-program-in-example-that-outputs-itself
