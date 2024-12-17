@@ -13,9 +13,9 @@
 ; The result of the division operation is truncated to an integer and then written to the A register.
 (deftest should-perform-adv
   (testing "Should perform adv"
-    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 4 :BX 0 :CX 0})))
-    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
-    (is (= {:output nil :registers{:AX 1 :BX 3 :CX 0}} (adv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
+    (is (= {:output nil :registers {:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 4 :BX 0 :CX 0})))
+    (is (= {:output nil :registers {:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
+    (is (= {:output nil :registers {:AX 1 :BX 3 :CX 0}} (adv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
     )
 )
 
@@ -23,7 +23,7 @@
 ; and the instruction's literal operand, then stores the result in register B.
 (deftest should-perform-bxl
   (testing "Should perform bxl"
-    (is (= {:output nil :registers{:AX 0 :BX 1 :CX 0}} (bxl 6 {:AX 0 :BX 7 :CX 0})))
+    (is (= {:output nil :registers {:AX 0 :BX 1 :CX 0}} (bxl 6 {:AX 0 :BX 7 :CX 0})))
     )
   )
 
@@ -31,19 +31,26 @@
 ; (thereby keeping only its lowest 3 bits), then writes that value to the B register.
 (deftest should-perform-bst
   (testing "Should perform bst"
-    (is (= {:output nil :registers{:AX 0 :BX 3 :CX 0}} (bst 3 {:AX 0 :BX 0 :CX 0})))
-    (is (= {:output nil :registers{:AX 255 :BX 7 :CX 0}} (bst 4 {:AX 255 :BX 0 :CX 0}))) ; use register
+    (is (= {:output nil :registers {:AX 0 :BX 3 :CX 0}} (bst 3 {:AX 0 :BX 0 :CX 0})))
+    (is (= {:output nil :registers {:AX 255 :BX 7 :CX 0}} (bst 4 {:AX 255 :BX 0 :CX 0}))) ; use register
     )
   )
 
 ;The jnz instruction (opcode 3) does nothing if the A register is 0. However,
-; if the A register is not zero, it jumps by setting the instruction pointer to the value of its literal operand; if this instruction jumps, the instruction pointer is not increased by 2 after this instruction.
+; if the A register is not zero, it jumps by setting the instruction pointer to the value of its literal operand;
+; if this instruction jumps, the instruction pointer is not increased by 2 after this instruction.
+(deftest should-perform-jnz
+  (testing "Should perform jnz"
+    (is (= {:output nil :registers {:AX 0 :BX 0 :CX 0}} (jnz 0 {:AX 0 :BX 0 :CX 0}))) ; does nothing with AX=0
+    (is (= {:instruction-ptr 7 :output nil :registers {:AX 1 :BX 0 :CX 0}} (jnz 7 {:AX 1 :BX 0 :CX 0}))) ; sets instruction if AX!=0
+    )
+  )
 
 ;The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C,
 ; then stores the result in register B. (For legacy reasons, this instruction reads an operand but ignores it.)
 (deftest should-perform-bxc
   (testing "Should perform bxc"
-    (is (= {:output nil :registers{:AX 0 :BX 15 :CX 9}} (bxc 0 {:AX 0 :BX 6 :CX 9})))
+    (is (= {:output nil :registers {:AX 0 :BX 15 :CX 9}} (bxc 0 {:AX 0 :BX 6 :CX 9})))
     )
   )
 
@@ -51,8 +58,8 @@
 ; then outputs that value. (If a program outputs multiple values, they are separated by commas.)
 (deftest should-perform-out
   (testing "Should perform out"
-    (is (= {:output 3 :registers{:AX 0 :BX 0 :CX 0}} (out 3 {:AX 0 :BX 0 :CX 0})))
-    (is (= {:output 7 :registers{:AX 255 :BX 0 :CX 0}} (out 4 {:AX 255 :BX 0 :CX 0}))) ; use register
+    (is (= {:output 3 :registers {:AX 0 :BX 0 :CX 0}} (out 3 {:AX 0 :BX 0 :CX 0})))
+    (is (= {:output 7 :registers {:AX 255 :BX 0 :CX 0}} (out 4 {:AX 255 :BX 0 :CX 0}))) ; use register
     )
   )
 
@@ -62,9 +69,9 @@
 ; The result of the division operation is truncated to an integer and then written to the B register.
 (deftest should-perform-bdv
   (testing "Should perform bdv"
-    (is (= {:output nil :registers{:AX 4 :BX 1 :CX 0}} (bdv 2 {:AX 4 :BX 0 :CX 0})))
-    (is (= {:output nil :registers{:AX 6 :BX 1 :CX 0}} (bdv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
-    (is (= {:output nil :registers{:AX 8 :BX 1 :CX 0}} (bdv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
+    (is (= {:output nil :registers {:AX 4 :BX 1 :CX 0}} (bdv 2 {:AX 4 :BX 0 :CX 0})))
+    (is (= {:output nil :registers {:AX 6 :BX 1 :CX 0}} (bdv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
+    (is (= {:output nil :registers {:AX 8 :BX 1 :CX 0}} (bdv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
     )
   )
 
@@ -72,9 +79,9 @@
 ; (The numerator is still read from the A register.)
 (deftest should-perform-cdv
   (testing "Should perform cdv"
-    (is (= {:output nil :registers{:AX 4 :BX 0 :CX 1}} (cdv 2 {:AX 4 :BX 0 :CX 0})))
-    (is (= {:output nil :registers{:AX 6 :BX 0 :CX 1}} (cdv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
-    (is (= {:output nil :registers{:AX 8 :BX 3 :CX 1}} (cdv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
+    (is (= {:output nil :registers {:AX 4 :BX 0 :CX 1}} (cdv 2 {:AX 4 :BX 0 :CX 0})))
+    (is (= {:output nil :registers {:AX 6 :BX 0 :CX 1}} (cdv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
+    (is (= {:output nil :registers {:AX 8 :BX 3 :CX 1}} (cdv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
     )
   )
 

@@ -48,6 +48,14 @@
     )
   )
 
+(defn jnz [operand {:keys [AX BX CX] :as registers}]
+  (if (zero? AX)
+    {:output nil :registers registers}
+    {:instruction-ptr operand :output nil :registers registers}
+    )
+  )
+
+
 (defn bxc [operand {:keys [AX BX CX] :as registers}]
   (let [
         result (bit-xor BX CX)
