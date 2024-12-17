@@ -70,7 +70,13 @@
 
 ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register.
 ; (The numerator is still read from the A register.)
-
+(deftest should-perform-cdv
+  (testing "Should perform cdv"
+    (is (= {:output nil :registers{:AX 4 :BX 0 :CX 1}} (cdv 2 {:AX 4 :BX 0 :CX 0})))
+    (is (= {:output nil :registers{:AX 6 :BX 0 :CX 1}} (cdv 2 {:AX 6 :BX 0 :CX 0}))) ; handle non integers
+    (is (= {:output nil :registers{:AX 8 :BX 3 :CX 1}} (cdv 5 {:AX 8 :BX 3 :CX 0}))) ; use BX for combo operand
+    )
+  )
 
 (deftest should-execute-program-in-example
   (testing "Should execute program in example"

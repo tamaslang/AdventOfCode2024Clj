@@ -76,6 +76,16 @@
     )
   )
 
+(defn cdv [operand {:keys [AX BX CX] :as registers}]
+  (let [
+        resolved-operand (resolve-combo-operand operand registers)
+        result (int (/ AX (Math/pow 2 resolved-operand)))
+        registers* (assoc registers :CX result)
+        ]
+    {:output nil :registers registers*}
+    )
+  )
+
 (defn execute-program
   "should find solution"
   [data]
