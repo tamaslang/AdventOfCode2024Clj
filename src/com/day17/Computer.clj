@@ -67,8 +67,6 @@
    7 cdv})
 
 (defn execute [instructions {:keys [AX BX CX] :as registers}]
-  (println "EXECUTE " instructions)
-  (println "REGISTERS " registers)
   (loop
    [instruction-ptr 0
     registers registers
@@ -105,3 +103,15 @@
   (let [{:keys [instructions registers]} (compile-program data)
         {output :output registers* :registers} (execute instructions registers)]
     (str/join "," output)))
+
+; PART 2 brute force
+(defn find-AX-register-value-for-program-to-output-itself-brute-force
+  "should find solution"
+  [upper-limit data]
+  (let [{:keys [instructions registers]} (compile-program data)
+        expected-instructions  (flatten instructions)]
+    (reduce (fn [_ AX]
+              (let [{output :output} (execute instructions (assoc registers :AX AX))]
+                (when (zero? (mod AX 100000)) (println "COUNT: " AX))
+                (when (= output expected-instructions) (reduced AX)))) 0 (range 0 upper-limit))))
+
