@@ -49,6 +49,12 @@
 
 ;The out instruction (opcode 5) calculates the value of its combo operand modulo 8,
 ; then outputs that value. (If a program outputs multiple values, they are separated by commas.)
+(deftest should-perform-out
+  (testing "Should perform out"
+    (is (= {:output 3 :registers{:AX 0 :BX 0 :CX 0}} (out 3 {:AX 0 :BX 0 :CX 0})))
+    (is (= {:output 7 :registers{:AX 255 :BX 0 :CX 0}} (out 4 {:AX 255 :BX 0 :CX 0}))) ; use register
+    )
+  )
 
 ;The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register.
 ; (The numerator is still read from the A register.)

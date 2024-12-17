@@ -57,6 +57,15 @@
     )
   )
 
+(defn out [operand {:keys [AX BX CX] :as registers}]
+  (let [
+        resolved-operand (resolve-combo-operand operand registers)
+        result (mod resolved-operand 8)
+        ]
+    {:output result :registers registers}
+    )
+  )
+
 (defn execute-program
   "should find solution"
   [data]
