@@ -38,6 +38,16 @@
     )
   )
 
+(defn bst [operand {:keys [AX BX CX] :as registers}]
+  (let [
+        resolved-operand (resolve-combo-operand operand registers)
+        result (mod resolved-operand 8)
+        registers* (assoc registers :BX result)
+        ]
+    {:output nil :registers registers*}
+    )
+  )
+
 (defn execute-program
   "should find solution"
   [data]

@@ -29,6 +29,12 @@
 
 ;The bst instruction (opcode 2) calculates the value of its combo operand modulo 8
 ; (thereby keeping only its lowest 3 bits), then writes that value to the B register.
+(deftest should-perform-bst
+  (testing "Should perform bst"
+    (is (= {:output nil :registers{:AX 0 :BX 3 :CX 0}} (bst 3 {:AX 0 :BX 0 :CX 0})))
+    (is (= {:output nil :registers{:AX 255 :BX 7 :CX 0}} (bst 4 {:AX 255 :BX 0 :CX 0}))) ; use register
+    )
+  )
 
 ;The jnz instruction (opcode 3) does nothing if the A register is 0. However,
 ; if the A register is not zero, it jumps by setting the instruction pointer to the value of its literal operand; if this instruction jumps, the instruction pointer is not increased by 2 after this instruction.
