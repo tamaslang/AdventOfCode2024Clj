@@ -41,6 +41,11 @@
 
 ;The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C,
 ; then stores the result in register B. (For legacy reasons, this instruction reads an operand but ignores it.)
+(deftest should-perform-bxc
+  (testing "Should perform bxc"
+    (is (= {:output nil :registers{:AX 0 :BX 15 :CX 9}} (bxc 0 {:AX 0 :BX 6 :CX 9})))
+    )
+  )
 
 ;The out instruction (opcode 5) calculates the value of its combo operand modulo 8,
 ; then outputs that value. (If a program outputs multiple values, they are separated by commas.)

@@ -48,6 +48,15 @@
     )
   )
 
+(defn bxc [operand {:keys [AX BX CX] :as registers}]
+  (let [
+        result (bit-xor BX CX)
+        registers* (assoc registers :BX result)
+        ]
+    {:output nil :registers registers*}
+    )
+  )
+
 (defn execute-program
   "should find solution"
   [data]
