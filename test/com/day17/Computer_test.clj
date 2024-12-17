@@ -105,7 +105,7 @@
                                            ""
                                            "Program: 2,4,1,7,7,5,1,7,0,3,4,1,5,5,3,0"])))))
 
-; prgram outputs itself
+; program outputs itself
 (deftest should-execute-program-in-example-that-outputs-itself
   (is (= "0,3,5,4,3,0" (execute-program ["Register A: 117440"
                                          "Register B: 0"
@@ -117,3 +117,10 @@
 (deftest should-find-AX-for-program-that-output-itself-for-input-file
   (testing "Should execute program in example"
     (is (= 246852 (find-AX-register-value-for-expected-n-instructions 6 (str/split-lines (slurp data-file)))))))
+
+(deftest should-execute-program-in-example-that-outputs-itself
+  (is (= 117440 (find-register-value-for-output-copy-of-program 229 ["Register A: 117440"
+                                         "Register B: 0"
+                                         "Register C: 0"
+                                         ""
+                                         "Program: 0,3,5,4,3,0"]))))
