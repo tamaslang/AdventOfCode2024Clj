@@ -20,12 +20,19 @@
   )
 
 (defn adv [operand {:keys [AX BX CX] :as registers}]
-  (println "operand " operand)
-  (println "registers" "AX=" AX "BX=" BX "CX=" CX)
   (let [
         resolved-operand (resolve-combo-operand operand registers)
         result (int (/ AX (Math/pow resolved-operand 2)))
         registers* (assoc registers :AX result)
+        ]
+    {:output nil :registers registers*}
+    )
+  )
+
+(defn bxl [operand {:keys [AX BX CX] :as registers}]
+  (let [
+        result (bit-xor BX operand)
+        registers* (assoc registers :BX result)
         ]
     {:output nil :registers registers*}
     )

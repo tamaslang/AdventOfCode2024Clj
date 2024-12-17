@@ -13,31 +13,37 @@
 ; The result of the division operation is truncated to an integer and then written to the A register.
 (deftest should-perform-adv
   (testing "Should perform adv, divide by 4"
-    (is (= {:output nil :registers{:AX 1 :BX 2 :CX 3}} (adv 2 {:AX 4 :BX 2 :CX 3})))
-    (is (= {:output nil :registers{:AX 1 :BX 2 :CX 3}} (adv 2 {:AX 6 :BX 2 :CX 3}))) ; handle non integers
-    (is (= {:output nil :registers{:AX 1 :BX 2 :CX 3}} (adv 5 {:AX 4 :BX 2 :CX 3}))) ; use BX for combo operand
+    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 4 :BX 0 :CX 0})))
+    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 2 {:AX 6 :BX 2 :CX 0}))) ; handle non integers
+    (is (= {:output nil :registers{:AX 1 :BX 0 :CX 0}} (adv 5 {:AX 4 :BX 0 :CX 0}))) ; use BX for combo operand
     )
 )
 
+;The bxl instruction (opcode 1) calculates the bitwise XOR of register B
+; and the instruction's literal operand, then stores the result in register B.
+(deftest should-perform-bxl
+  (testing "Should perform bxl"
+    (is (= {:output nil :registers{:AX 0 :BX 1 :CX 0}} (bxl 6 {:AX 0 :BX 7 :CX 0})))
+    )
+  )
+
 ;The bst instruction (opcode 2) calculates the value of its combo operand modulo 8
-;(thereby keeping only its lowest 3 bits), then writes that value to the B register.
-(deftest should-perform-bst
-  (testing "Should perform bst"
-    ;(is (= {:output nil :registers{:AX 1 :BX 2 :CX 3}} (adv 2 {:AX 4 :BX 2 :CX 3})))
-    ;(is (= {:output nil :registers{:AX 1 :BX 2 :CX 3}} (adv 2 {:AX 6 :BX 2 :CX 3})))
-    )
-  )
+; (thereby keeping only its lowest 3 bits), then writes that value to the B register.
 
-; The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C,
-; then stores the result in register B.
-; (For legacy reasons, this instruction reads an operand but ignores it.)
-(deftest should-perform-bdv
-  (testing "Should perform bdv"
-    ;(is (= {:output nil :registers{:AX 1 :BX 2 :CX 3}} (adv 2 {:AX 4 :BX 2 :CX 3})))
-    ;(is (= {:output nil :registers{:AX 1 :BX 2 :CX 3}} (adv 2 {:AX 6 :BX 2 :CX 3})))
-    )
-  )
+;The jnz instruction (opcode 3) does nothing if the A register is 0. However,
+; if the A register is not zero, it jumps by setting the instruction pointer to the value of its literal operand; if this instruction jumps, the instruction pointer is not increased by 2 after this instruction.
 
+;The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C,
+; then stores the result in register B. (For legacy reasons, this instruction reads an operand but ignores it.)
+
+;The out instruction (opcode 5) calculates the value of its combo operand modulo 8,
+; then outputs that value. (If a program outputs multiple values, they are separated by commas.)
+
+;The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register.
+; (The numerator is still read from the A register.)
+
+; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register.
+; (The numerator is still read from the A register.)
 (deftest should-execute-program-in-example
   (testing "Should execute program in example"
     (is (= 0 (execute-program [
