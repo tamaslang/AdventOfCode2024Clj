@@ -131,7 +131,7 @@
 
 (defn parse-register-str [register-line]
   (let [[_ register-name register-value] (re-find #"Register ([A|B|C]): (\d+)" register-line)]
-    (Integer/parseInt register-value)))
+    (Long/parseLong register-value)))
 
 (defn parse-instruction-str [instruction-line]
   (let [[_ instructions-str] (re-find #"Program: (.+)" instruction-line)]
@@ -198,13 +198,13 @@
   [start-AX data]
   (let [{:keys [instructions registers]} (compile-program data)
         expected-instructions (flatten instructions)]
-    (loop
-     [AX start-AX]
-      (let [output (execute-combined AX (fn [output] true))
-            output-matches-from-end (= (take-last (count output) expected-instructions) output)
-            AX* (if output-matches-from-end (* AX 8) (inc AX))]
-        (cond
-          (= output expected-instructions) AX
-          :else (recur AX*))))))
+    (reduce (fn [AX _]
+              (let [output (execute-combined AX (fn [output] true))
+                    output-matches-from-end (= (take-last (count output) expected-instructions) output)
+                    AX* (if output-matches-from-end (* AX 8) (inc AX))]
+                (cond
+                  (= output expected-instructions) (reduced AX)
+                  :else AX*)))
 
-
+            start-AX
+            (range))))
