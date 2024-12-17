@@ -184,17 +184,27 @@
   (let [{:keys [instructions registers]} (compile-program data)
         expected-instructions (flatten instructions)]
     (loop
-      [AX start-AX]
-      (let [{output* :output} (execute false instructions (assoc registers :AX AX))
-            output-matches-from-end (= (take-last (count output*) expected-instructions) output*)
-            AX* (if output-matches-from-end (* AX 8) (inc AX))
-            ]
+     [AX start-AX]
+      (let [{output :output} (execute false instructions (assoc registers :AX AX))
+            output-matches-from-end (= (take-last (count output) expected-instructions) output)
+            AX* (if output-matches-from-end (* AX 8) (inc AX))]
+        (when (zero? (mod AX 1000000)) (println "COUNT: " AX))
         (cond
-          (= output* expected-instructions) AX
-          :else (recur AX*)
-          )
-        )
-      )
-    )
-)
+          (= output expected-instructions) AX
+          :else (recur AX*))))))
+
+(defn find-register-value-for-output-copy-of-program-with-simplified-execution
+  "should find solution"
+  [start-AX data]
+  (let [{:keys [instructions registers]} (compile-program data)
+        expected-instructions (flatten instructions)]
+    (loop
+     [AX start-AX]
+      (let [output (execute-combined AX (fn [output] true))
+            output-matches-from-end (= (take-last (count output) expected-instructions) output)
+            AX* (if output-matches-from-end (* AX 8) (inc AX))]
+        (cond
+          (= output expected-instructions) AX
+          :else (recur AX*))))))
+
 

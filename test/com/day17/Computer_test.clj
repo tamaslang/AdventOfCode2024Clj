@@ -113,14 +113,17 @@
                                          ""
                                          "Program: 0,3,5,4,3,0"]))))
 
-; 2,4,1,7,7,5,1,7,0,3,4,1,5,5,3,0
+(deftest should-find-AX-value-for-program-that-outputs-itself
+  (is (= 117440 (find-register-value-for-output-copy-of-program 3 ["Register A: 117440"
+                                                                   "Register B: 0"
+                                                                   "Register C: 0"
+                                                                   ""
+                                                                   "Program: 0,3,5,4,3,0"]))))
+
 (deftest should-find-AX-for-program-that-output-itself-for-input-file
   (testing "Should execute program in example"
-    (is (= 246852 (find-AX-register-value-for-expected-n-instructions 6 (str/split-lines (slurp data-file)))))))
+    (is (= 1974818 (find-AX-register-value-for-expected-n-instructions 7 (str/split-lines (slurp data-file)))))))
 
-(deftest should-execute-program-in-example-that-outputs-itself
-  (is (= 117440 (find-register-value-for-output-copy-of-program 229 ["Register A: 117440"
-                                         "Register B: 0"
-                                         "Register C: 0"
-                                         ""
-                                         "Program: 0,3,5,4,3,0"]))))
+(deftest should-find-AX-value-for-program-that-outputs-itself-for-input-file
+  (is (= 265601188299675 (find-register-value-for-output-copy-of-program-with-simplified-execution 1974818 (str/split-lines (slurp data-file))))))
+
