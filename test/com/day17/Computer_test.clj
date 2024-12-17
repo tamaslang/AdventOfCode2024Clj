@@ -99,6 +99,7 @@
                                          ""
                                          "Program: 0,3,5,4,3,0"]))))
 
+
 (deftest should-find-AX-for-program-that-output-itself-in-example
   (testing "Should execute program in example"
     (is (= 117440 (find-AX-register-value-for-program-to-output-itself-brute-force 120000 ["Register A: 117440"
@@ -107,6 +108,7 @@
                                                                                            ""
                                                                                            "Program: 0,3,5,4,3,0"])))))
 
-;(deftest should-find-AX-for-program-that-output-itself-in-example
-;  (testing "Should execute program in example"
-;    (is (= 117440 (find-AX-register-value-for-program-to-output-itself-brute-force Integer/MAX_VALUE (str/split-lines (slurp data-file)))))))
+; until 20000000 not found
+(deftest should-find-AX-for-program-that-output-itself-for-input-file
+  (testing "Should execute program in example"
+    (is (= 117440 (find-AX-register-value-for-program-to-output-itself-brute-force Integer/MAX_VALUE (str/split-lines (slurp data-file)))))))
