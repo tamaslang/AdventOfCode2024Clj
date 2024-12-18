@@ -1,5 +1,6 @@
 (ns com.day18.RamRun
   (:require [clojure.set :as set]
+            [clojure.string :as str]
             [com.utils.InputParsing :refer :all]))
 
 (defn parse-positions [positions]
@@ -44,16 +45,18 @@
           []
           (range 0  (* dimension dimension))))
 
-(defn traverse-with-blocks [dimension start-pos end-pos blocks]
+(defn log-memory [step-count traversers visited-pos blocks dimension]
+  (println)
+  (println)
+  (println (format "STEP %d. Traversers=%s" step-count traversers))
+  (print-area traversers visited-pos blocks dimension))
+
+(defn traverse-with-blocks [logging? dimension start-pos end-pos blocks]
   (def visited-pos (atom {}))
   (loop
    [traversers #{start-pos}
     step-count 0]
-    ;(println)
-    ;(println)
-    ;(println "STEP " step-count ". Traversers=" traversers)
-    ;(println step-count ". Visited pos=" @visited-pos)
-    ;(print-area traversers @visited-pos blocks dimension)
+    (when logging? (log-memory step-count traversers @visited-pos blocks dimension))
     (cond
       (any-traverser-reached-end end-pos traversers) [true step-count]
       (empty? traversers) [false step-count]
@@ -68,23 +71,35 @@
 
 (defn shortest-path-to-exit
   "should find shortest-path-to-exit"
-  [dimension nr-of-box-fallen data]
+  [logging? dimension nr-of-box-fallen data]
   (let [blocks (parse-positions data)
         blocks-fallen (set (take nr-of-box-fallen blocks))
         start-pos [0 0]
         end-pos [(dec dimension) (dec dimension)]
-        [escaped? step-count] (traverse-with-blocks dimension start-pos end-pos blocks-fallen)]
+        [_ step-count] (traverse-with-blocks logging? dimension start-pos end-pos blocks-fallen)]
     step-count))
+
+(defn test-escaped-for [dimension start-pos end-pos blocks nr-of-blocks-fallen]
+  (first (traverse-with-blocks false dimension start-pos end-pos (set (take nr-of-blocks-fallen blocks)))))
+
+(defn find-element [f-test-escaped-for? start end]
+  (loop
+   [interval-start start
+    interval-end end]
+    (let [interval-middle (int (/ (+ interval-start interval-end) 2))
+          [interval-start* interval-end*] (if (and (f-test-escaped-for? interval-start) (not (f-test-escaped-for? interval-middle))) [interval-start (dec interval-middle)] [(inc interval-middle) interval-end])]
+      (println (format "Intervals [%d %d] [%d %d]" interval-start interval-middle (inc interval-middle) interval-end))
+      (cond
+        (= interval-start* interval-end*) interval-start
+        :else (recur interval-start* interval-end*)))))
 
 (defn first-byte-that-blocks
   "should find shortest-path-to-exit"
   [dimension data]
   (let [blocks (parse-positions data)
         start-pos [0 0]
-        end-pos [(dec dimension) (dec dimension)]]
-    (reduce (fn [_ nr-of-box-fallen]
-              (println "CHECKING " nr-of-box-fallen)
-              (let [blocks-fallen (set (take nr-of-box-fallen blocks))
-                    [escaped? _] (traverse-with-blocks dimension start-pos end-pos blocks-fallen)]
-                (when (not escaped?) (reduced nr-of-box-fallen))))
-            (range 0 (count blocks)))))
+        end-pos [(dec dimension) (dec dimension)]
+        f-test-escaped-for? (partial test-escaped-for dimension start-pos end-pos blocks)
+        byte-index (find-element f-test-escaped-for? 0 (dec (count blocks)))
+        byte (nth blocks byte-index)]
+    (str/join "," byte)))

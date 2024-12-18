@@ -9,39 +9,36 @@
 
 (deftest should-find-shortest-path-in-example
   (testing "Should find shortest path in example"
-    (is (= 22 (shortest-path-to-exit 7 12 ["5,4"
-                                           "4,2"
-                                           "4,5"
-                                           "3,0"
-                                           "2,1"
-                                           "6,3"
-                                           "2,4"
-                                           "1,5"
-                                           "0,6"
-                                           "3,3"
-                                           "2,6"
-                                           "5,1"
-                                           "1,2"
-                                           "5,5"
-                                           "2,5"
-                                           "6,5"
-                                           "1,4"
-                                           "0,4"
-                                           "6,4"
-                                           "1,1"
-                                           "6,1"
-                                           "1,0"
-                                           "0,5"
-                                           "1,6"
-                                           "2,0"])))))
+    (is (= 22 (shortest-path-to-exit true 7 12 ["5,4"
+                                                "4,2"
+                                                "4,5"
+                                                "3,0"
+                                                "2,1"
+                                                "6,3"
+                                                "2,4"
+                                                "1,5"
+                                                "0,6"
+                                                "3,3"
+                                                "2,6"
+                                                "5,1"
+                                                "1,2"
+                                                "5,5"
+                                                "2,5"
+                                                "6,5"
+                                                "1,4"
+                                                "0,4"
+                                                "6,4"
+                                                "1,1"
+                                                "6,1"
+                                                "1,0"
+                                                "0,5"
+                                                "1,6"
+                                                "2,0"])))))
 
 (deftest should-find-shortest-path-in-input-file
   (testing "Should find shortest path in input file"
-    (is (= 340 (shortest-path-to-exit 71 1024 (str/split-lines (slurp data-file)))))))
-; 2913
-; 2914 it terminates
-; 2915 won't terminate, the coordinates are: 34,32
+    (is (= 340 (shortest-path-to-exit false 71 1024 (str/split-lines (slurp data-file)))))))
 
-(deftest should-find-shortest-path-in-input-file
-  (testing "Should find shortest path in input file"
-    (is (= 2915 (first-byte-that-blocks 71 (str/split-lines (slurp data-file)))))))
+(deftest should-find-blocking-byte-in-input-file
+  (testing "Should find blocking byte in input file"
+    (is (= "34,32" (first-byte-that-blocks 71 (str/split-lines (slurp data-file)))))))
