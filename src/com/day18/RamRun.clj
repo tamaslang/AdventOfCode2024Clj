@@ -49,11 +49,11 @@
   (loop
    [traversers #{start-pos}
     step-count 0]
-    (println)
-    (println)
-    (println "STEP " step-count ". Traversers=" traversers)
-    (println step-count ". Visited pos=" @visited-pos)
-    (print-area traversers @visited-pos blocks dimension)
+    ;(println)
+    ;(println)
+    ;(println "STEP " step-count ". Traversers=" traversers)
+    ;(println step-count ". Visited pos=" @visited-pos)
+    ;(print-area traversers @visited-pos blocks dimension)
     (cond
       (any-traverser-reached-end end-pos traversers) step-count
       :else
@@ -61,9 +61,10 @@
                              (map (fn [traverser] (update-state visited-pos traverser step-count)))
                              (mapcat (fn [traverser] (adjacent traverser dimension)))
                              (filter (fn [traverser] (nil? (@visited-pos traverser))))
+                             (filter (fn [traverser] (nil? (blocks traverser))))
                              set)]
         ;(println "HERE?  " traversers*)
-        (recur (set/difference traversers* blocks) (inc step-count))))))
+        (recur traversers* (inc step-count))))))
 
 (defn shortest-path-to-exit
   "should find shortest-path-to-exit"
@@ -73,3 +74,14 @@
         start-pos [0 0]
         end-pos [(dec dimension) (dec dimension)]]
     (traverse-with-blocks dimension start-pos end-pos blocks-fallen)))
+;
+;(defn shortest-path-to-exit-first-block
+;  "should find shortest-path-to-exit"
+;  [dimension nr-of-box-fallen-start data]
+;  (let [blocks (parse-positions data)
+;        start-pos [0 0]
+;        end-pos [(dec dimension) (dec dimension)]]
+;    (reduce (fn[_ nr-of-box-fallen])
+;
+;            )
+;    (traverse-with-blocks dimension start-pos end-pos blocks-fallen)))
