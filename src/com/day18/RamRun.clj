@@ -25,9 +25,7 @@
    (filter (fn [[x y]] (and
                         (>= (dec dimension) x 0)
                         (>= (dec dimension) y 0))))
-   set)
-
-  )
+   set))
 
 (defn update-state [visited-pos-state traverser step]
   (swap! visited-pos-state assoc traverser step)
@@ -36,7 +34,7 @@
 (defn print-area [traversers visited-pos blocks  dimension]
   (reduce (fn [_, count]
             (let
-              [[x y] [(mod count dimension) (int (Math/floor (/ count dimension)))]]
+             [[x y] [(mod count dimension) (int (Math/floor (/ count dimension)))]]
               (when (zero? x) (println ""))
               (cond
                 (traversers [x y]) (print \@)
@@ -45,7 +43,6 @@
                 :else (print \.))))
           []
           (range 0  (* dimension dimension))))
-
 
 (defn traverse-with-blocks [dimension start-pos end-pos blocks]
   (def visited-pos (atom {}))
