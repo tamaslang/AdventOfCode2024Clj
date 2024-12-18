@@ -41,8 +41,7 @@
 ; 2913
 ; 2914 it terminates
 ; 2915 won't terminate, the coordinates are: 34,32
-(comment
-  "WON'T TERMINATE!!!"
-  (deftest should-find-shortest-path-in-input-file
-    (testing "Should find shortest path in input file"
-      (is (= 340 (shortest-path-to-exit 71 2915 (str/split-lines (slurp data-file))))))))
+
+(deftest should-find-shortest-path-in-input-file
+  (testing "Should find shortest path in input file"
+    (is (= 2915 (first-byte-that-blocks 71 (str/split-lines (slurp data-file)))))))

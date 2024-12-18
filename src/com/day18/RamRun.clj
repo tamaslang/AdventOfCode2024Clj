@@ -55,7 +55,8 @@
     ;(println step-count ". Visited pos=" @visited-pos)
     ;(print-area traversers @visited-pos blocks dimension)
     (cond
-      (any-traverser-reached-end end-pos traversers) step-count
+      (any-traverser-reached-end end-pos traversers) [true step-count]
+      (empty? traversers) [false step-count]
       :else
       (let [traversers* (->> traversers
                              (map (fn [traverser] (update-state visited-pos traverser step-count)))
@@ -63,7 +64,6 @@
                              (filter (fn [traverser] (nil? (@visited-pos traverser))))
                              (filter (fn [traverser] (nil? (blocks traverser))))
                              set)]
-        ;(println "HERE?  " traversers*)
         (recur traversers* (inc step-count))))))
 
 (defn shortest-path-to-exit
@@ -72,16 +72,19 @@
   (let [blocks (parse-positions data)
         blocks-fallen (set (take nr-of-box-fallen blocks))
         start-pos [0 0]
+        end-pos [(dec dimension) (dec dimension)]
+        [escaped? step-count] (traverse-with-blocks dimension start-pos end-pos blocks-fallen)]
+    step-count))
+
+(defn first-byte-that-blocks
+  "should find shortest-path-to-exit"
+  [dimension data]
+  (let [blocks (parse-positions data)
+        start-pos [0 0]
         end-pos [(dec dimension) (dec dimension)]]
-    (traverse-with-blocks dimension start-pos end-pos blocks-fallen)))
-;
-;(defn shortest-path-to-exit-first-block
-;  "should find shortest-path-to-exit"
-;  [dimension nr-of-box-fallen-start data]
-;  (let [blocks (parse-positions data)
-;        start-pos [0 0]
-;        end-pos [(dec dimension) (dec dimension)]]
-;    (reduce (fn[_ nr-of-box-fallen])
-;
-;            )
-;    (traverse-with-blocks dimension start-pos end-pos blocks-fallen)))
+    (reduce (fn [_ nr-of-box-fallen]
+              (println "CHECKING " nr-of-box-fallen)
+              (let [blocks-fallen (set (take nr-of-box-fallen blocks))
+                    [escaped? _] (traverse-with-blocks dimension start-pos end-pos blocks-fallen)]
+                (when (not escaped?) (reduced nr-of-box-fallen))))
+            (range 0 (count blocks)))))
