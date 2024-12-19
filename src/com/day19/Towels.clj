@@ -32,11 +32,8 @@
   "Find pattern combinations for towels"
   [data]
   (let [[patterns towels] (parse-input data)]
-    (println "pattern " patterns)
-    (println "towels " towels)
     (->>
      towels
-     (map #(do (println "COUNT MATCHING FOR " %) %))
      (map #(count-reaching-end-with-patterns-memo patterns %))
      (filter #(> % 0))
      (count))))
@@ -45,11 +42,7 @@
   "Find all different ways for part 2"
   [data]
   (let [[patterns towels] (parse-input data)]
-    (println "pattern " patterns)
-    (println "towels " towels)
     (->>
      towels
-     (map #(do (println "COUNT MATCHING FOR " %) %))
      (map #(count-reaching-end-with-patterns-memo patterns %))
-     (filter #(> % 0))
      (reduce +))))
