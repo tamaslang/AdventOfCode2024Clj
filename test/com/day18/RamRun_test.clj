@@ -5,7 +5,7 @@
             [clojure.java.io :as io]))
 
 (def data-file (io/resource
-                "resources/day17/input.txt"))
+                "resources/day18/input.txt"))
 
 (deftest should-find-shortest-path-in-example
   (testing "Should find shortest path in example"
