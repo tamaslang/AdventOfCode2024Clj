@@ -17,14 +17,13 @@
 
 (defn adjacents-with-distance [[x y] distance dimension]
   (->>
-    [[x (- y distance)]
-     [(- x distance) y]
-     [(+ x distance) y]
-     [x (+ y distance)]]
-    (filter (fn [[x y]] (and
-                          (>= (dec dimension) x 0)
-                          (>= (dec dimension) y 0))))))
-
+   [[x (- y distance)]
+    [(- x distance) y]
+    [(+ x distance) y]
+    [x (+ y distance)]]
+   (filter (fn [[x y]] (and
+                        (>= (dec dimension) x 0)
+                        (>= (dec dimension) y 0))))))
 
 (defn distance [[x1 y1] [x2 y2]]
   (+ (abs (- x1 x2)) (abs (- y1 y2))))
@@ -48,7 +47,6 @@
 ;[2 2]
 ;->
 
-
 ;###############
 ;#...#...#.....#
 ;#.#.#.#.#.###.#
@@ -64,19 +62,16 @@
 ;#.#.#.#.#.#.###
 ;#...#...#...###
 ;###############
-(defn jumps-from-pos-with-with-range-check [pos step visited min-distance max-distance]
+(defn jumps-from-pos-with-with-range-check [pos step visited min-distance max-distance save-at-least]
   (->>
-    visited
-    (filter (fn[[visited-pos _]] (<= min-distance (distance pos visited-pos) max-distance)))
-    (map (fn[[visited-pos score]] (- step score (distance pos visited-pos))))
-    (filter #(> % 0))))
-
-(defn jumps-from [pos step jump-distance visited dimension]
-  (jumps-from-pos-with-with-range-check pos step visited 2 2)
-)
+   visited
+   (filter (fn [[visited-pos score]] (and (<= score (- step save-at-least)) (<= min-distance (distance pos visited-pos) max-distance))))
+   (map (fn [[visited-pos score]] (- step score (distance pos visited-pos))))
+   (filter #(> % 0))))
 
 (defn print-area [current-pos  start-pos end-pos visited-pos blocks  dimension]
   (reduce (fn [_, count]
+
             (let
              [[x y] [(mod count dimension) (int (Math/floor (/ count dimension)))]]
               (when (zero? x) (println ""))
@@ -90,12 +85,13 @@
           []
           (range 0  (* dimension dimension))))
 
-(defn map-jumps-from [matrix start-pos]
+(defn map-jumps-from [matrix start-pos min-distance max-distance save-at-least]
   (def dimensioon (count matrix))
   (reduce (fn [[current-pos last-pos visited jumps] step-count]
+            (when (zero? (mod step-count  100)) (println "step " step-count))
             (let
              [visited* (assoc visited current-pos step-count)
-              jumps* (doall (concat jumps (jumps-from current-pos step-count 2 visited dimensioon)))
+              jumps* (doall (concat jumps (jumps-from-pos-with-with-range-check current-pos step-count visited min-distance max-distance save-at-least)))
               next-pos (->>
                         (adjacents matrix current-pos)
                         (filter (fn [[symbol _]] (or (end? symbol) (space? symbol))))
@@ -111,11 +107,11 @@
 
 (defn find-cheats
   "should find solution"
-  [min-saved-picosec data]
+  [min-distance max-distance save-at-least data]
   (let
    [matrix (create-matrix data)
     start-pos (matrix->find-first matrix \S)
-    jumps (map-jumps-from matrix start-pos)]
+    jumps (map-jumps-from matrix start-pos min-distance max-distance save-at-least)]
     (->> jumps
-         (filter #(>= % min-saved-picosec))
+         (filter #(>= % save-at-least))
          count)))
