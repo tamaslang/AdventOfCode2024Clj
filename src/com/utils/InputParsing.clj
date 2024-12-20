@@ -89,6 +89,18 @@
             #{}
             (range 0 (* size-x size-y)))))
 
+(defn matrix->find-all-pos-with-fmatching [matrix char-matching?]
+  (let
+   [size-y (count matrix)
+    size-x (count (first matrix))]
+    (reduce (fn [found, count]
+              (let
+               [pos [(mod count size-x) (int (Math/floor (/ count size-x)))]
+                char-at-pos (matrix->get-xy matrix pos)]
+                (if (char-matching? char-at-pos) (conj found pos) found)))
+            #{}
+            (range 0 (* size-x size-y)))))
+
 (defn print-matrix [matrix]
   (doseq [line matrix]
     (println (apply str line))))
