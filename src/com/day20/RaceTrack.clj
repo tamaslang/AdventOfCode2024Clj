@@ -15,20 +15,19 @@
 (defn end? [char] (= char \E))
 (defn start? [char] (= char \S))
 
-(defn adjacents-with-distance [matrix [x y] distance]
-  (keep identity [;above
-                  (matrix->get-char-at-xy matrix [x (- y distance)])
-                  ; same row
-                  (matrix->get-char-at-xy matrix [(- x distance) y])
-                  (matrix->get-char-at-xy matrix [(+ x distance) y])
-                  ; row below
-                  (matrix->get-char-at-xy matrix [x (+ y distance)])]))
-
-(defn jumps-from [matrix pos step jump-size visited]
+(defn adjacents-with-distance [[x y] distance dimension]
   (->>
-   (adjacents-with-distance matrix pos jump-size)
-   (filter (fn [[symbol _]] (or (end? symbol) (start? symbol) (space? symbol))))
-   (map second)
+   [[x (- y distance)]
+    [(- x distance) y]
+    [(+ x distance) y]
+    [x (+ y distance)]]
+   (filter (fn [[x y]] (and
+                        (>= (dec dimension) x 0)
+                        (>= (dec dimension) y 0))))))
+
+(defn jumps-from [pos step jump-size visited dimension]
+  (->>
+   (adjacents-with-distance pos jump-size dimension)
    (map (fn [adjacent-pos] (visited adjacent-pos)))
    (remove nil?)
    (map (fn [adjacent-step] (- step adjacent-step jump-size)))
@@ -50,10 +49,11 @@
           (range 0  (* dimension dimension))))
 
 (defn map-jumps-from [matrix start-pos]
+  (def dimensioon (count matrix))
   (reduce (fn [[current-pos last-pos visited jumps] step-count]
             (let
              [visited* (assoc visited current-pos step-count)
-              jumps* (doall (concat jumps (jumps-from matrix current-pos step-count 2 visited)))
+              jumps* (doall (concat jumps (jumps-from current-pos step-count 2 visited dimensioon)))
               next-pos (->>
                         (adjacents matrix current-pos)
                         (filter (fn [[symbol _]] (or (end? symbol) (space? symbol))))
