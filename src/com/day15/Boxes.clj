@@ -3,13 +3,6 @@
             [com.utils.InputParsing :refer :all]
             [clojure.string :as str]))
 
-;(def directions
-;  [[0, -1]
-;   [1 0]
-;   [0 1]
-;   [-1 0]])
-;
-
 (defn map-instuction-to-direction [instruction]
   (cond
     (= instruction \^) [0, -1]

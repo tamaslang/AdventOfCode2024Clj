@@ -17,21 +17,63 @@
 
 (defn adjacents-with-distance [[x y] distance dimension]
   (->>
-   [[x (- y distance)]
-    [(- x distance) y]
-    [(+ x distance) y]
-    [x (+ y distance)]]
-   (filter (fn [[x y]] (and
-                        (>= (dec dimension) x 0)
-                        (>= (dec dimension) y 0))))))
+    [[x (- y distance)]
+     [(- x distance) y]
+     [(+ x distance) y]
+     [x (+ y distance)]]
+    (filter (fn [[x y]] (and
+                          (>= (dec dimension) x 0)
+                          (>= (dec dimension) y 0))))))
 
-(defn jumps-from [pos step jump-size visited dimension]
+
+(defn distance [[x1 y1] [x2 y2]]
+  (+ (abs (- x1 x2)) (abs (- y1 y2))))
+;(distance [1 3] [3 7])
+;6
+
+;0 0 1 2 3 4
+;0 X X X X X
+;1 X X X X X
+;2 X X @ X X
+;3 X X X X X
+;4 X X X X X
+;
+;0 0 1 2 3 4
+;0 X X A X X
+;1 X A A A X
+;2 A A @ A A
+;3 X A A A X
+;4 X X A X X
+;
+;[2 2]
+;->
+
+
+;###############
+;#...#...#.....#
+;#.#.#.#.#.###.#
+;#S#...#.#.#...#
+;#######.#.#.###
+;#######.#.#...#
+;#######.#.###.#
+;###..E#...#...#
+;###.#######.###
+;#...###...#...#
+;#.#####.#.###.#
+;#.#...#.#.#...#
+;#.#.#.#.#.#.###
+;#...#...#...###
+;###############
+(defn jumps-from-pos-with-with-range-check [pos step visited min-distance max-distance]
   (->>
-   (adjacents-with-distance pos jump-size dimension)
-   (map (fn [adjacent-pos] (visited adjacent-pos)))
-   (remove nil?)
-   (map (fn [adjacent-step] (- step adjacent-step jump-size)))
-   (filter #(> % 0))))
+    visited
+    (filter (fn[[visited-pos _]] (<= min-distance (distance pos visited-pos) max-distance)))
+    (map (fn[[visited-pos score]] (- step score (distance pos visited-pos))))
+    (filter #(> % 0))))
+
+(defn jumps-from [pos step jump-distance visited dimension]
+  (jumps-from-pos-with-with-range-check pos step visited 2 2)
+)
 
 (defn print-area [current-pos  start-pos end-pos visited-pos blocks  dimension]
   (reduce (fn [_, count]
@@ -65,7 +107,6 @@
                 (not next-pos) (reduced jumps*)
                 :else
                 [next-pos current-pos visited* jumps*])))
-
           [start-pos nil {} []] (range 0 (* (count matrix) (count matrix)))))
 
 (defn find-cheats
