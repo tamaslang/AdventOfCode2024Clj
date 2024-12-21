@@ -26,33 +26,27 @@
    \v [1 1]
    \> [2 1]})
 
-
-
 ;Least turns (this becomes important when escaping the missing cell in both numeric and directional pads).
 ;
 ;moving < over ^ over v over >.
 (def move-order
-  {
-   \< 0
+  {\< 0
    \^ 1
    \v 2
-   \> 3
-   }
-  )
-(defn instructions-from-to[keypad-mapped from to]
+   \> 3})
+
+(defn instructions-from-to [keypad-mapped from to]
   (let [[from to] [(keypad-mapped from) (keypad-mapped to)]
         void (keypad-mapped \X)
         [dx dy] (distance from to)
         x-instructions (if (< dx 0) (repeat (abs dx) \<) (repeat dx \>))
         y-instructions (if (< dy 0) (repeat (abs dy) \^) (repeat dy \v))
         paths    (->> [(when (not= void [(+ (first from) dx) (second from)]) ; can go x first
-                (str (apply str x-instructions) (apply str y-instructions) "A"))
-              (when (not= void [(first from) (+ dy (second from))]) ; can go y first
-                (str (apply str y-instructions) (apply str x-instructions) "A"))]
-             (keep identity))
-        ]
-    (first (sort-by (fn[path] (move-order (first path))) paths))
-    ))
+                         (str (apply str x-instructions) (apply str y-instructions) "A"))
+                       (when (not= void [(first from) (+ dy (second from))]) ; can go y first
+                         (str (apply str y-instructions) (apply str x-instructions) "A"))]
+                      (keep identity))]
+    (first (sort-by (fn [path] (move-order (first path))) paths))))
 
 (defn robot-sequence [keypad-mapped sequence]
   (reduce (fn [instructions [from to]]
@@ -60,19 +54,22 @@
           ""
           (partition 2 1 (str "A" sequence))))
 
-(defn to-instructions [input]
-  (->> [input]
-       (map #(robot-sequence numpad %))
-       (map #(robot-sequence dirpad %))
-       (map #(robot-sequence dirpad %))
-       first))
+(defn recur-instructions [input depths limit]
+  (println "depths " depths "limit" limit "input=" input)
+  (cond
+    (= depths limit) (count input)
+    :else
+    (recur-instructions (robot-sequence dirpad input) (inc depths) limit)))
+
+(defn count-instruction-length [input limit]
+  (recur-instructions (robot-sequence numpad input) 0 limit))
 
 (defn numeric-part [input]
   (Integer/parseInt (apply str (filter Character/isDigit input))))
 
 (defn calculate-robot-sequences
   "should calculate root sequences"
-  [data]
+  [depths data]
   (->> data
-       (map (fn [input] (* (count (to-instructions input)) (numeric-part input))))
+       (map (fn [input] (* (count-instruction-length input depths) (numeric-part input))))
        (reduce +)))
