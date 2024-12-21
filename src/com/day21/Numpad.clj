@@ -55,7 +55,6 @@
           (partition 2 1 (str "A" sequence))))
 
 (defn recur-instructions [input depths limit]
-  (println "depths " depths "limit" limit "input=" input)
   (cond
     (= depths limit) (count input)
     :else
