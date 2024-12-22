@@ -19,9 +19,7 @@
    \v [1 4]
    \> [2 4]})
 
-;Least turns (this becomes important when escaping the missing cell in both numeric and directional pads).
-;
-;moving < over ^ over v over >.
+; moving < over ^ over v over >.
 (def move-order
   {\< 0
    \^ 1
@@ -34,14 +32,14 @@
   (let [[from to] [(keypad from) (keypad to)]
         void (keypad \X)
         [dx dy] (distance from to)
-        x-instructions (if (< dx 0) (repeat (abs dx) \<) (repeat dx \>))
-        y-instructions (if (< dy 0) (repeat (abs dy) \^) (repeat dy \v))
+        x-instructions (if (< dx 0) (repeat (abs dx) \<) (repeat dx \>)) ;Least turns (groupped)
+        y-instructions (if (< dy 0) (repeat (abs dy) \^) (repeat dy \v)) ;Least turns (groupped)
         paths (->> [(when (not= void [(+ (first from) dx) (second from)]) ; can go x first
                       (str (apply str x-instructions) (apply str y-instructions) "A"))
                     (when (not= void [(first from) (+ dy (second from))]) ; can go y first
                       (str (apply str y-instructions) (apply str x-instructions) "A"))]
                    (keep identity))]
-    (first (sort-by (fn [path] (move-order (first path))) paths))))
+    (first (sort-by (fn [path] (move-order (first path))) paths)))) ;
 
 (defn sequence-to-instructions [sequence]
   (reduce (fn [instructions [from to]]
