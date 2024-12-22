@@ -35,33 +35,36 @@
    \v 2
    \> 3})
 
-(defn instructions-from-to [keypad-mapped from to]
-  (let [[from to] [(keypad-mapped from) (keypad-mapped to)]
-        void (keypad-mapped \X)
-        [dx dy] (distance from to)
-        x-instructions (if (< dx 0) (repeat (abs dx) \<) (repeat dx \>))
-        y-instructions (if (< dy 0) (repeat (abs dy) \^) (repeat dy \v))
-        paths    (->> [(when (not= void [(+ (first from) dx) (second from)]) ; can go x first
-                         (str (apply str x-instructions) (apply str y-instructions) "A"))
-                       (when (not= void [(first from) (+ dy (second from))]) ; can go y first
-                         (str (apply str y-instructions) (apply str x-instructions) "A"))]
-                      (keep identity))]
-    (first (sort-by (fn [path] (move-order (first path))) paths))))
+(def instructions-from-to-memo (memoize (fn [keypad-mapped from to]
+                                          (let [[from to] [(keypad-mapped from) (keypad-mapped to)]
+                                                void (keypad-mapped \X)
+                                                [dx dy] (distance from to)
+                                                x-instructions (if (< dx 0) (repeat (abs dx) \<) (repeat dx \>))
+                                                y-instructions (if (< dy 0) (repeat (abs dy) \^) (repeat dy \v))
+                                                paths (->> [(when (not= void [(+ (first from) dx) (second from)]) ; can go x first
+                                                              (str (apply str x-instructions) (apply str y-instructions) "A"))
+                                                            (when (not= void [(first from) (+ dy (second from))]) ; can go y first
+                                                              (str (apply str y-instructions) (apply str x-instructions) "A"))]
+                                                           (keep identity))]
+                                            (first (sort-by (fn [path] (move-order (first path))) paths))))))
 
-(defn robot-sequence [keypad-mapped sequence]
-  (reduce (fn [instructions [from to]]
-            (str instructions (instructions-from-to keypad-mapped from to)))
-          ""
-          (partition 2 1 (str "A" sequence))))
+(def robot-sequence-memo (memoize (fn [keypad-mapped sequence]
+                                    (reduce (fn [instructions [from to]]
+                                              (conj instructions (instructions-from-to-memo keypad-mapped from to)))
+                                            []
+                                            (partition 2 1 (str "A" sequence))))))
 
-(defn recur-instructions [input depths limit]
-  (cond
-    (= depths limit) (count input)
-    :else
-    (recur-instructions (robot-sequence dirpad input) (inc depths) limit)))
+(def recur-instructions-memo (memoize (fn [input depths limit]
+                                        (cond
+                                          (= depths limit) (count input)
+                                          :else
+                                          (->>
+                                           (robot-sequence-memo dirpad input)
+                                           (map #(recur-instructions-memo % (inc depths) limit))
+                                           (reduce +))))))
 
 (defn count-instruction-length [input limit]
-  (recur-instructions (robot-sequence numpad input) 0 limit))
+  (reduce + (map #(recur-instructions-memo % 0 limit) (robot-sequence-memo numpad input))))
 
 (defn numeric-part [input]
   (Integer/parseInt (apply str (filter Character/isDigit input))))

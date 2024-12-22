@@ -18,3 +18,7 @@
 (deftest should-solve-for-input-file
   (testing "Should solve for input file"
     (is (= 184180 (calculate-robot-sequences 2 (str/split-lines (slurp data-file)))))))
+
+(deftest should-solve-for-input-file-part2
+  (testing "Should solve for input file"
+    (is (= 231309103124520 (calculate-robot-sequences 25 (str/split-lines (slurp data-file)))))))
