@@ -37,3 +37,20 @@
 (deftest should-add-up-generated-numbers-in-input-file
   (testing "Should add up generated numbers in input file"
     (is (= 13022553808 (nth-secret-number 2000 (str/split-lines (slurp data-file)))))))
+
+(deftest should-get-best-price-for-example-1
+  (testing "Should get best price for example-1"
+    (is (= 6 (best-price 10 ["123"])))))
+
+(deftest should-get-best-price-for-example-2
+  (testing "Should get best price for example-2"
+    (is (= 23 (best-price 2000 ["1"
+                                "2"
+                                "3"
+                                "2024"])))))
+
+(deftest should-get-best-price-for-input-file
+  (testing "Should get best price for input file"
+    (is (= 20 (best-price 2000 (str/split-lines (slurp data-file)))))))
+; ATTEMPTED
+;Best price sequence  (-1 2 0 0)  =  1605 (too high)
