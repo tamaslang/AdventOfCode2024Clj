@@ -36,4 +36,4 @@
 
 (deftest should-add-up-generated-numbers-in-input-file
   (testing "Should add up generated numbers in input file"
-    (is (= 37327623 (nth-secret-number 2000 (str/split-lines (slurp data-file)))))))
+    (is (= 13022553808 (nth-secret-number 2000 (str/split-lines (slurp data-file)))))))
