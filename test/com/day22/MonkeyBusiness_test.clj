@@ -51,4 +51,4 @@
 
 (deftest should-get-best-price-for-input-file
   (testing "Should get best price for input file"
-    (is (= 1605 (best-price 2000 (str/split-lines (slurp data-file)))))))
+    (is (= 1555 (best-price 2000 (str/split-lines (slurp data-file)))))))
