@@ -17,26 +17,26 @@
               c2-added))
           {} connections))
 
-(defn find-intersect [mapped-connections computer from network]
+(defn find-intersect [mapped-connections computer network root-computers min-size max-size]
   (let
-    [connections (remove #{from} (mapped-connections computer))
-     network* (conj network computer)
-     intersect? (not-empty (set/intersection network (set connections)))
-     ]
+   [connections (set/difference (set (mapped-connections computer)) network)
+    only-valid-if-all-connected (set/intersection connections root-computers)
+    network* (conj network computer)
+    ]
+    ;(println "network " network*)
+    ;(println "connections " connections)
+    ;(println "only-valid-if-all-connected " only-valid-if-all-connected)
     (cond
-      intersect? network*
-      (= (count network*) 3) nil
+      (= max-size (count network*)) network*
+      (and (empty? only-valid-if-all-connected) (= max-size (count network*))) network*
+      (empty? only-valid-if-all-connected) nil
       :else
-        (->>
-          connections
-          (map #(find-intersect mapped-connections % computer network*))
-          (remove nil?)
-          (flatten)
-          (distinct)
-          )
-      )
-    )
-)
+      (->>
+        only-valid-if-all-connected
+       (map #(find-intersect mapped-connections % network* root-computers min-size max-size))
+       (remove nil?)
+       (flatten)
+       (distinct)))))
 
 (defn find-connected-computers
   "should find solution"
@@ -47,6 +47,8 @@
      mapped-connections
      (filter (fn [[c _]] (= (first c) \t)))
      (map (fn [[c _]] c))
-     (mapcat (fn [computer] (find-intersect mapped-connections computer computer #{computer})))
+     (mapcat (fn [computer] (find-intersect mapped-connections computer #{computer} (set (mapped-connections computer)) 3 3)))
      distinct
-     count)))
+     count
+     )
+    ))
