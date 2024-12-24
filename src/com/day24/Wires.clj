@@ -43,13 +43,13 @@
 
 (defn resolve-wires [wires gates]
   (def wires-state (atom wires))
-  (reduce (fn [result z-to-resolve]
-            (+ (* result 2) (if (resolve-a-wire wires-state gates z-to-resolve) 1 0)))
-          0
-          (find-all-endwire @wires-state)))
+  (reduce (fn [result z-to-resolve] (+ (* result 2) (if (resolve-a-wire wires-state gates z-to-resolve) 1 0))) 0 (find-all-endwire @wires-state)))
 
 (defn calculate-wires-output
   "should find solution"
   [data]
   (let [{:keys [wires gates]} (parse-wires-input data)]
+    (println "Initialised")
+    (println (format "Wires[%d]=%s " (count wires) wires))
+    (println (format "Gates[%d]=%s " (count gates) gates))
     (resolve-wires wires gates)))
