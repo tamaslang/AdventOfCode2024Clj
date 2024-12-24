@@ -49,7 +49,4 @@
   "should find solution"
   [data]
   (let [{:keys [wires gates]} (parse-wires-input data)]
-    (println "Initialised")
-    (println (format "Wires[%d]=%s " (count wires) wires))
-    (println (format "Gates[%d]=%s " (count gates) gates))
     (resolve-wires wires gates)))
