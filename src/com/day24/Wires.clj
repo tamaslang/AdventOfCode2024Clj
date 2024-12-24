@@ -33,20 +33,20 @@
     (swap! wires-state assoc wire-name result)
     result))
 
+(defn find-all-endwire [wires]
+  (->>
+   wires
+   keys
+   (filter (fn [wire] (str/starts-with? wire "z")))
+   sort
+   reverse))
+
 (defn resolve-wires [wires gates]
   (def wires-state (atom wires))
-  (let
-   [zs-for-result (->>
-                   wires
-                   keys
-                   (filter (fn [wire] (str/starts-with? wire "z")))
-                   sort
-                   reverse)
-    result (reduce (fn [result z-to-resolve]
-                     (+ (* result 2) (if (resolve-a-wire wires-state gates z-to-resolve) 1 0)))
-                   0
-                   zs-for-result)]
-    result))
+  (reduce (fn [result z-to-resolve]
+            (+ (* result 2) (if (resolve-a-wire wires-state gates z-to-resolve) 1 0)))
+          0
+          (find-all-endwire @wires-state)))
 
 (defn calculate-wires-output
   "should find solution"

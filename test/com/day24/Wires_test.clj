@@ -72,4 +72,4 @@
 
 (deftest should-calculate-wire-output-on-input-file
   (testing "Should calculate wire output"
-    (is (= 0 (calculate-wires-output (str/split-lines (slurp data-file)))))))
+    (is (= 49520947122770 (calculate-wires-output (str/split-lines (slurp data-file)))))))
