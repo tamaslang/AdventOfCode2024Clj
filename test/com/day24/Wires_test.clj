@@ -5,28 +5,24 @@
             [clojure.java.io :as io]))
 
 (def data-file (io/resource
-                 "resources/day24/input.txt"))
+                "resources/day24/input.txt"))
 
 (deftest should-calculate-wire-output-on-example-1
   (testing "Should calculate wire output"
-    (is (= 4 (calculate-wires-output [
-                     "x00: 1"
-                     "x01: 1"
-                     "x02: 1"
-                     "y00: 0"
-                     "y01: 1"
-                     "y02: 0"
-                     ""
-                     "x00 AND y00 -> z00"
-                     "x01 XOR y01 -> z01"
-                     "x02 OR y02 -> z02"
-                     "ntg XOR y01 -> mjb"
-                     ])))))
+    (is (= 4 (calculate-wires-output ["x00: 1"
+                                      "x01: 1"
+                                      "x02: 1"
+                                      "y00: 0"
+                                      "y01: 1"
+                                      "y02: 0"
+                                      ""
+                                      "x00 AND y00 -> z00"
+                                      "x01 XOR y01 -> z01"
+                                      "x02 OR y02 -> z02"])))))
 
 (deftest should-calculate-wire-output-on-example-2
   (testing "Should calculate wire output"
-    (is (= 2024 (calculate-wires-output [
-                                         "x00: 1"
+    (is (= 2024 (calculate-wires-output ["x00: 1"
                                          "x01: 0"
                                          "x02: 1"
                                          "x03: 1"
@@ -72,10 +68,7 @@
                                          "y03 OR x01 -> nrd"
                                          "hwm AND bqk -> z03"
                                          "tgd XOR rvg -> z12"
-                                         "tnw OR pbm -> gnj"
-                                      ])))))
-
-
+                                         "tnw OR pbm -> gnj"])))))
 
 (deftest should-calculate-wire-output-on-input-file
   (testing "Should calculate wire output"
