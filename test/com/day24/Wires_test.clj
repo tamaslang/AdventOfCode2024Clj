@@ -73,3 +73,7 @@
 (deftest should-calculate-wire-output-on-input-file
   (testing "Should calculate wire output"
     (is (= 49520947122770 (calculate-wires-output (str/split-lines (slurp data-file)))))))
+
+(deftest should-find-wrong-gates-input-file
+  (testing "Should find wrong-gates wire output"
+    (is (= "gjc,gvm,qjj,qsb,wmp,z17,z26,z39" (detect-wrong-gates (str/split-lines (slurp data-file)))))))
