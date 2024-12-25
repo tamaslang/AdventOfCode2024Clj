@@ -7,9 +7,9 @@
 (def data-file (io/resource
                 "resources/day25/input.txt"))
 
-(deftest should-find-mathching-keys
-  (testing "Should solve"
-    (is (= 0 (find-matching-keys ["#####"
+(deftest should-find-matching-keys-in-example
+  (testing "Should find matching keys in example"
+    (is (= 3 (find-matching-keys ["#####"
                                   ".####"
                                   ".####"
                                   ".####"
@@ -49,6 +49,6 @@
                                   "#.#.#"
                                   "#####"])))))
 
-(deftest should-solve-for-input-file
-  (testing "Should solve for input file"
-    (is (= 0 (find-matching-keys (str/split-lines (slurp data-file)))))))
+(deftest should-find-matching-keys-in-input-file
+  (testing "Should find matching keys in input file"
+    (is (= 2900 (find-matching-keys (str/split-lines (slurp data-file)))))))
