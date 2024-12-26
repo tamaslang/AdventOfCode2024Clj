@@ -2,40 +2,27 @@
   (:require [com.utils.InputParsing :refer :all]
             [clojure.string :as str]))
 
-(defn parse-as-number [line]
-  (reduce (fn [result char] (+ (* result 10) (if (= char \#) 1 0))) 0 line))
-
 (defn to-heights [schema-lines]
-  (->>
-   schema-lines
-   (map parse-as-number)
-   (reduce +)))
+  (->> schema-lines
+       (map char-array) ; map all lines to char array
+       (apply map vector) ; create columns based on indexes
+       (map (fn [column] (count (filter #(= % \#) column)))) ; count # in each column creating the key value e.g. (1 6 4 5 4)
+       ))
 
-(defn key? [group] (every? #{\#} (last group)))
-
-(defn lock? [group] (every? #{\#} (first group)))
+(defn key? [group] (every? #{\#} (last group))) ; lines are parsed as key if all character of the last line is \#
 
 (defn parse-locks-and-keys [input-lines]
-  (let [keys_and_locks (->>
-                        (partition-by str/blank? input-lines)
-                        (remove #(= 1 (count %))))
-        keys (filter key? keys_and_locks)
-        locks (filter lock? keys_and_locks)]
+  (let [{keys true locks false} (->> (partition-by str/blank? input-lines)
+                                     (remove #(every? str/blank? %))
+                                     (group-by key?))]
     {:locks (map to-heights locks) :keys (map to-heights keys)}))
 
-(defn try-match [length width this that]
-  (reduce (fn [[key-remaining, lock-remaining] _]
-            (if (> (+ (mod key-remaining 10) (mod lock-remaining 10)) length) (reduced false)
-                [(int (/ key-remaining 10)) (int (/ lock-remaining 10))])) [this that] (range 0 width)))
-
-(defn find-matching-keys
-  "should find overlapping keys"
-  [data]
-  (let [{:keys [locks keys]} (parse-locks-and-keys data)
-        matcher (partial try-match 7 5)]
+(defn find-matching-keys [data]
+  (let [{:keys [locks keys]} (parse-locks-and-keys data)]
     (reduce (fn [acc lock]
               (+ acc
                  (->> keys
-                      (map (fn [key] (if (matcher lock key) 1 0)))
+                      (map (fn [key] (every? #(<= % 7) (map + key lock))))
+                      (map #(get {false 0 true 1} %))
                       (reduce +))))
             0 locks)))
