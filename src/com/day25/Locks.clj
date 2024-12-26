@@ -6,7 +6,7 @@
   (->> schema-lines
        (map char-array) ; map all lines to char array
        (apply map vector) ; create columns based on indexes
-       (map (fn [column] (count (filter #(= % \#) column)))) ; count # in each column creating the key value e.g. (1 6 4 5 4)
+       (map (fn [column] (count (filter #(= % \#) column)))) ; count # in each column creating the key/lock value e.g. (1 6 4 5 4)
        ))
 
 (defn key? [group] (every? #{\#} (last group))) ; lines are parsed as key if all character of the last line is \#
