@@ -17,12 +17,12 @@
                                      (group-by key?))]
     {:locks (map to-heights locks) :keys (map to-heights keys)}))
 
+(defn count-matching-keys-for-lock [lock keys]
+  (->> keys
+       (map (fn [key] (every? #(<= % 7) (map + key lock))))
+       (map #(get {false 0 true 1} %))
+       (reduce +)))
+
 (defn find-matching-keys [data]
   (let [{:keys [locks keys]} (parse-locks-and-keys data)]
-    (reduce (fn [acc lock]
-              (+ acc
-                 (->> keys
-                      (map (fn [key] (every? #(<= % 7) (map + key lock))))
-                      (map #(get {false 0 true 1} %))
-                      (reduce +))))
-            0 locks)))
+    (reduce (fn [matched-key-lock lock] (+ matched-key-lock (count-matching-keys-for-lock lock keys))) 0 locks)))
